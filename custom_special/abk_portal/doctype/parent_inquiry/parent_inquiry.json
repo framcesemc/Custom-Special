@@ -1,0 +1,144 @@
+{
+ "actions": [],
+ "autoname": "format:PI-.#####",
+ "creation": "2026-05-07 00:00:00.000000",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "engine": "InnoDB",
+ "field_order": [
+  "parent_name",
+  "phone",
+  "location_section",
+  "city",
+  "district",
+  "inquiry_type",
+  "child_age",
+  "child_needs",
+  "message",
+  "related_section",
+  "related_place",
+  "related_teacher",
+  "status",
+  "follow_up_notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "parent_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Parent Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "phone",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Phone",
+   "reqd": 1
+  },
+  {
+   "fieldname": "location_section",
+   "fieldtype": "Section Break",
+   "label": "Location"
+  },
+  {
+   "fieldname": "city",
+   "fieldtype": "Data",
+   "in_standard_filter": 1,
+   "label": "City"
+  },
+  {
+   "fieldname": "district",
+   "fieldtype": "Data",
+   "in_standard_filter": 1,
+   "label": "District"
+  },
+  {
+   "fieldname": "inquiry_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Inquiry Type",
+   "options": "School Info\nTherapy Info\nFriendly Place Info\nShadow Teacher\nGeneral"
+  },
+  {
+   "fieldname": "child_age",
+   "fieldtype": "Data",
+   "label": "Child Age"
+  },
+  {
+   "fieldname": "child_needs",
+   "fieldtype": "Small Text",
+   "label": "Child Needs"
+  },
+  {
+   "fieldname": "message",
+   "fieldtype": "Text Editor",
+   "label": "Message"
+  },
+  {
+   "fieldname": "related_section",
+   "fieldtype": "Section Break",
+   "label": "Related"
+  },
+  {
+   "fieldname": "related_place",
+   "fieldtype": "Link",
+   "label": "Related Place",
+   "options": "ABK Place"
+  },
+  {
+   "fieldname": "related_teacher",
+   "fieldtype": "Link",
+   "label": "Related Teacher",
+   "options": "Shadow Teacher"
+  },
+  {
+   "default": "New",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "New\nContacted\nIn Progress\nClosed\nCancelled"
+  },
+  {
+   "fieldname": "follow_up_notes",
+   "fieldtype": "Text Editor",
+   "label": "Follow Up Notes"
+  }
+ ],
+ "idx": 0,
+ "links": [],
+ "modified": "2026-05-07 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "ABK Portal",
+ "name": "Parent Inquiry",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "read": 1,
+   "role": "ABK Admin",
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "parent_name",
+ "track_changes": 1
+}

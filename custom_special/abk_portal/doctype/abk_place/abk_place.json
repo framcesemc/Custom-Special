@@ -1,0 +1,200 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:slug",
+ "creation": "2026-05-07 00:00:00.000000",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "engine": "InnoDB",
+ "field_order": [
+  "place_name",
+  "slug",
+  "place_type",
+  "published",
+  "verification_status",
+  "location_section",
+  "province",
+  "city",
+  "district",
+  "area",
+  "address",
+  "google_map_url",
+  "details_section",
+  "short_description",
+  "plus_points",
+  "minus_points",
+  "special_needs_tags",
+  "age_range",
+  "price_range",
+  "cover_image",
+  "admin_section",
+  "admin_notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "place_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Place Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "slug",
+   "fieldtype": "Data",
+   "label": "Slug",
+   "unique": 1
+  },
+  {
+   "fieldname": "place_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Place Type",
+   "options": "School\nTherapy Center\nABK Friendly Place",
+   "search_index": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "published",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Published",
+   "search_index": 1
+  },
+  {
+   "fieldname": "verification_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Verification Status",
+   "options": "Draft\nNeed Review\nPublished\nRejected",
+   "search_index": 1
+  },
+  {
+   "fieldname": "location_section",
+   "fieldtype": "Section Break",
+   "label": "Location"
+  },
+  {
+   "fieldname": "province",
+   "fieldtype": "Data",
+   "label": "Province"
+  },
+  {
+   "fieldname": "city",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "City",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "district",
+   "fieldtype": "Data",
+   "in_standard_filter": 1,
+   "label": "District",
+   "search_index": 1
+  },
+  {
+   "fieldname": "area",
+   "fieldtype": "Data",
+   "label": "Area"
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Small Text",
+   "label": "Address"
+  },
+  {
+   "fieldname": "google_map_url",
+   "fieldtype": "Data",
+   "label": "Google Map Url"
+  },
+  {
+   "fieldname": "details_section",
+   "fieldtype": "Section Break",
+   "label": "Details"
+  },
+  {
+   "fieldname": "short_description",
+   "fieldtype": "Small Text",
+   "label": "Short Description"
+  },
+  {
+   "fieldname": "plus_points",
+   "fieldtype": "Text Editor",
+   "label": "Plus Points"
+  },
+  {
+   "fieldname": "minus_points",
+   "fieldtype": "Text Editor",
+   "label": "Minus Points"
+  },
+  {
+   "fieldname": "special_needs_tags",
+   "fieldtype": "Small Text",
+   "label": "Special Needs Tags"
+  },
+  {
+   "fieldname": "age_range",
+   "fieldtype": "Data",
+   "label": "Age Range"
+  },
+  {
+   "fieldname": "price_range",
+   "fieldtype": "Data",
+   "label": "Price Range"
+  },
+  {
+   "fieldname": "cover_image",
+   "fieldtype": "Attach Image",
+   "label": "Cover Image"
+  },
+  {
+   "fieldname": "admin_section",
+   "fieldtype": "Section Break",
+   "label": "Admin"
+  },
+  {
+   "fieldname": "admin_notes",
+   "fieldtype": "Text Editor",
+   "label": "Admin Notes"
+  }
+ ],
+ "idx": 0,
+ "links": [],
+ "modified": "2026-05-07 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "ABK Portal",
+ "name": "ABK Place",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "read": 1,
+   "role": "ABK Admin",
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "place_name",
+ "track_changes": 1
+}

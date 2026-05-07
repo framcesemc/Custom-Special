@@ -1,0 +1,172 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:slug",
+ "creation": "2026-05-07 00:00:00.000000",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "engine": "InnoDB",
+ "field_order": [
+  "teacher_name",
+  "slug",
+  "published",
+  "verification_status",
+  "location_section",
+  "city",
+  "district",
+  "service_area",
+  "profile_section",
+  "specialization_tags",
+  "experience_years",
+  "profile_summary",
+  "tariff_range",
+  "public_photo",
+  "internal_section",
+  "internal_phone",
+  "internal_email",
+  "admin_notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "teacher_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Teacher Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "slug",
+   "fieldtype": "Data",
+   "label": "Slug",
+   "unique": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "published",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Published",
+   "search_index": 1
+  },
+  {
+   "fieldname": "verification_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Verification Status",
+   "options": "Draft\nNeed Review\nPublished\nRejected",
+   "search_index": 1
+  },
+  {
+   "fieldname": "location_section",
+   "fieldtype": "Section Break",
+   "label": "Location"
+  },
+  {
+   "fieldname": "city",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "City",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "district",
+   "fieldtype": "Data",
+   "in_standard_filter": 1,
+   "label": "District",
+   "search_index": 1
+  },
+  {
+   "fieldname": "service_area",
+   "fieldtype": "Small Text",
+   "label": "Service Area"
+  },
+  {
+   "fieldname": "profile_section",
+   "fieldtype": "Section Break",
+   "label": "Profile"
+  },
+  {
+   "fieldname": "specialization_tags",
+   "fieldtype": "Small Text",
+   "label": "Specialization Tags"
+  },
+  {
+   "fieldname": "experience_years",
+   "fieldtype": "Int",
+   "label": "Experience Years"
+  },
+  {
+   "fieldname": "profile_summary",
+   "fieldtype": "Text Editor",
+   "label": "Profile Summary"
+  },
+  {
+   "fieldname": "tariff_range",
+   "fieldtype": "Data",
+   "label": "Tariff Range"
+  },
+  {
+   "fieldname": "public_photo",
+   "fieldtype": "Attach Image",
+   "label": "Public Photo"
+  },
+  {
+   "fieldname": "internal_section",
+   "fieldtype": "Section Break",
+   "label": "Internal"
+  },
+  {
+   "fieldname": "internal_phone",
+   "fieldtype": "Data",
+   "label": "Internal Phone"
+  },
+  {
+   "fieldname": "internal_email",
+   "fieldtype": "Data",
+   "label": "Internal Email"
+  },
+  {
+   "fieldname": "admin_notes",
+   "fieldtype": "Text Editor",
+   "label": "Admin Notes"
+  }
+ ],
+ "idx": 0,
+ "links": [],
+ "modified": "2026-05-07 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "ABK Portal",
+ "name": "Shadow Teacher",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "read": 1,
+   "role": "ABK Admin",
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "teacher_name",
+ "track_changes": 1
+}

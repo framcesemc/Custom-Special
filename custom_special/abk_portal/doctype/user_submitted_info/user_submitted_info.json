@@ -1,0 +1,139 @@
+{
+ "actions": [],
+ "autoname": "format:USI-.#####",
+ "creation": "2026-05-07 00:00:00.000000",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "engine": "InnoDB",
+ "field_order": [
+  "submitter_name",
+  "phone",
+  "suggested_place_name",
+  "location_section",
+  "city",
+  "district",
+  "info_type",
+  "description",
+  "plus_points",
+  "minus_points",
+  "media_upload",
+  "admin_section",
+  "verification_status",
+  "admin_notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "submitter_name",
+   "fieldtype": "Data",
+   "label": "Submitter Name"
+  },
+  {
+   "fieldname": "phone",
+   "fieldtype": "Data",
+   "label": "Phone"
+  },
+  {
+   "fieldname": "suggested_place_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Suggested Place Name"
+  },
+  {
+   "fieldname": "location_section",
+   "fieldtype": "Section Break",
+   "label": "Location"
+  },
+  {
+   "fieldname": "city",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "City"
+  },
+  {
+   "fieldname": "district",
+   "fieldtype": "Data",
+   "in_standard_filter": 1,
+   "label": "District"
+  },
+  {
+   "fieldname": "info_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Info Type",
+   "options": "School\nTherapy Center\nABK Friendly Place\nShadow Teacher\nTips"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text Editor",
+   "label": "Description"
+  },
+  {
+   "fieldname": "plus_points",
+   "fieldtype": "Text Editor",
+   "label": "Plus Points"
+  },
+  {
+   "fieldname": "minus_points",
+   "fieldtype": "Text Editor",
+   "label": "Minus Points"
+  },
+  {
+   "fieldname": "media_upload",
+   "fieldtype": "Attach",
+   "label": "Media Upload"
+  },
+  {
+   "fieldname": "admin_section",
+   "fieldtype": "Section Break",
+   "label": "Admin"
+  },
+  {
+   "default": "New",
+   "fieldname": "verification_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Verification Status",
+   "options": "New\nReviewing\nApproved\nRejected"
+  },
+  {
+   "fieldname": "admin_notes",
+   "fieldtype": "Text Editor",
+   "label": "Admin Notes"
+  }
+ ],
+ "idx": 0,
+ "links": [],
+ "modified": "2026-05-07 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "ABK Portal",
+ "name": "User Submitted Info",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "read": 1,
+   "role": "ABK Admin",
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
