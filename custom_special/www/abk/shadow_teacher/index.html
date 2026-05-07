@@ -1,0 +1,105 @@
+{% extends "templates/web.html" %}
+
+{% block page_content %}
+<div class="container py-4">
+	<div class="row">
+		<div class="col-lg-8">
+			<div class="row align-items-start mb-4">
+				{% if teacher.public_photo %}
+				<div class="col-md-4">
+					<img src="{{ teacher.public_photo }}" class="img-fluid rounded" alt="{{ teacher.teacher_name }}" style="width: 100%; object-fit: cover;">
+				</div>
+				{% endif %}
+				<div class="col">
+					<div class="text-muted mb-1">{{ teacher.city }}{% if teacher.district %}, {{ teacher.district }}{% endif %}</div>
+					<h1 class="h2 mb-3">{{ teacher.teacher_name }}</h1>
+					{% if teacher.tariff_range %}
+					<p class="lead">{{ teacher.tariff_range }}</p>
+					{% endif %}
+				</div>
+			</div>
+
+			{% if teacher.profile_summary %}
+			<section class="mb-4">
+				<h2 class="h5">Profile Summary</h2>
+				<div>{{ teacher.profile_summary }}</div>
+			</section>
+			{% endif %}
+
+			{% if teacher.specialization_tags %}
+			<section class="mb-4">
+				<h2 class="h5">Specialization</h2>
+				<p>{{ teacher.specialization_tags }}</p>
+			</section>
+			{% endif %}
+
+			{% if teacher.service_area %}
+			<section class="mb-4">
+				<h2 class="h5">Service Area</h2>
+				<p>{{ teacher.service_area }}</p>
+			</section>
+			{% endif %}
+		</div>
+
+		<div class="col-lg-4">
+			<div class="card">
+				<div class="card-body">
+					<h2 class="h5">Request via Admin</h2>
+					<p class="text-muted">Admin akan membantu meneruskan kebutuhan Anda.</p>
+					<div class="alert alert-success d-none" id="abk-inquiry-success">Request terkirim. Admin akan menghubungi Anda.</div>
+					<div class="alert alert-danger d-none" id="abk-inquiry-error"></div>
+					<form id="abk-inquiry-form">
+						<input type="hidden" name="inquiry_type" value="Shadow Teacher">
+						<input type="hidden" name="city" value="{{ teacher.city or '' }}">
+						<input type="hidden" name="district" value="{{ teacher.district or '' }}">
+						<input type="hidden" name="related_teacher" value="{{ teacher.name }}">
+						<div class="mb-3">
+							<label class="form-label" for="parent-name">Nama</label>
+							<input class="form-control" id="parent-name" name="parent_name" required>
+						</div>
+						<div class="mb-3">
+							<label class="form-label" for="phone">No. WhatsApp / Telepon</label>
+							<input class="form-control" id="phone" name="phone" required>
+						</div>
+						<div class="mb-3">
+							<label class="form-label" for="message">Pesan</label>
+							<textarea class="form-control" id="message" name="message" rows="4"></textarea>
+						</div>
+						<button class="btn btn-primary w-100" type="submit">Request via Admin</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+frappe.ready(function() {
+	const form = document.getElementById("abk-inquiry-form");
+	if (!form) return;
+
+	form.addEventListener("submit", function(event) {
+		event.preventDefault();
+		const success = document.getElementById("abk-inquiry-success");
+		const error = document.getElementById("abk-inquiry-error");
+		success.classList.add("d-none");
+		error.classList.add("d-none");
+
+		frappe.call({
+			method: "custom_special.abk_portal.public.submit_parent_inquiry",
+			args: Object.fromEntries(new FormData(form)),
+			callback: function() {
+				form.reset();
+				success.classList.remove("d-none");
+			},
+			error: function(response) {
+				error.textContent = response.message || "Request belum bisa dikirim. Silakan coba lagi.";
+				error.classList.remove("d-none");
+			}
+		});
+	});
+});
+</script>
+{% endblock %}

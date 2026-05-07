@@ -1,0 +1,93 @@
+{% extends "templates/web.html" %}
+
+{% block page_content %}
+<section class="py-4 py-md-5">
+	<div class="container">
+		<div class="row align-items-center">
+			<div class="col-lg-7">
+				<h1 class="h1 mb-3">ABK Portal</h1>
+				<p class="lead text-muted mb-4">Temukan sekolah, tempat terapi, tempat ramah ABK, dan shadow teacher yang sudah dipublikasikan.</p>
+				<form class="row" action="/abk/places" method="get">
+					<div class="col-md-7">
+						<input class="form-control form-control-lg" type="search" name="q" placeholder="Cari nama, kebutuhan, atau area">
+					</div>
+					<div class="col-md-3">
+						<select class="form-control form-control-lg" name="city">
+							<option value="">Semua Kota</option>
+							{% for city in cities %}
+							<option value="{{ city }}">{{ city }}</option>
+							{% endfor %}
+						</select>
+					</div>
+					<div class="col-md-2">
+						<button class="btn btn-primary btn-lg" type="submit">Cari</button>
+					</div>
+				</form>
+			</div>
+			<div class="col-lg-5">
+				<div class="p-4 bg-light rounded">
+					<div class="d-flex flex-wrap">
+						<a class="btn btn-outline-primary" href="/abk/places">Lihat Places</a>
+						<a class="btn btn-outline-primary" href="/abk/shadow-teachers">Shadow Teachers</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section class="py-4">
+	<div class="container">
+		<div class="d-flex justify-content-between align-items-center mb-3">
+			<h2 class="h4 mb-0">Featured ABK Place</h2>
+			<a href="/abk/places">Lihat semua</a>
+		</div>
+		<div class="row">
+			{% for place in featured_places %}
+			<div class="col-md-4">
+				<a class="card h-100 text-decoration-none text-reset" href="/abk/place/{{ place.slug }}">
+					{% if place.cover_image %}
+					<img src="{{ place.cover_image }}" class="card-img-top" alt="{{ place.place_name }}" style="height: 180px; object-fit: cover;">
+					{% endif %}
+					<div class="card-body">
+						<div class="small text-muted mb-1">{{ place.place_type }} · {{ place.city }}</div>
+						<h3 class="h5">{{ place.place_name }}</h3>
+						<p class="text-muted mb-0">{{ place.short_description or "" }}</p>
+					</div>
+				</a>
+			</div>
+			{% else %}
+			<div class="col-12"><p class="text-muted">Belum ada place yang dipublikasikan.</p></div>
+			{% endfor %}
+		</div>
+	</div>
+</section>
+
+<section class="py-4">
+	<div class="container">
+		<div class="d-flex justify-content-between align-items-center mb-3">
+			<h2 class="h4 mb-0">Featured Shadow Teacher</h2>
+			<a href="/abk/shadow-teachers">Lihat semua</a>
+		</div>
+		<div class="row">
+			{% for teacher in featured_teachers %}
+			<div class="col-md-4">
+				<a class="card h-100 text-decoration-none text-reset" href="/abk/shadow-teacher/{{ teacher.slug }}">
+					{% if teacher.public_photo %}
+					<img src="{{ teacher.public_photo }}" class="card-img-top" alt="{{ teacher.teacher_name }}" style="height: 180px; object-fit: cover;">
+					{% endif %}
+					<div class="card-body">
+						<div class="small text-muted mb-1">{{ teacher.city }}</div>
+						<h3 class="h5">{{ teacher.teacher_name }}</h3>
+						<p class="text-muted mb-2">{{ teacher.specialization_tags or "" }}</p>
+						<p class="mb-0">{{ teacher.tariff_range or "" }}</p>
+					</div>
+				</a>
+			</div>
+			{% else %}
+			<div class="col-12"><p class="text-muted">Belum ada shadow teacher yang dipublikasikan.</p></div>
+			{% endfor %}
+		</div>
+	</div>
+</section>
+{% endblock %}

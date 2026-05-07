@@ -1,0 +1,67 @@
+{% extends "templates/web.html" %}
+
+{% block page_content %}
+<div class="container py-4">
+	<div class="d-flex justify-content-between align-items-center mb-4">
+		<div>
+			<h1 class="h2 mb-1">ABK Places</h1>
+			<p class="text-muted mb-0">Daftar tempat yang sudah dipublikasikan dan diverifikasi.</p>
+		</div>
+		<a class="btn btn-outline-secondary" href="/abk">Portal</a>
+	</div>
+
+	<form class="row mb-4" method="get">
+		<div class="col-md-4">
+			<input class="form-control" type="search" name="q" value="{{ filters.q }}" placeholder="Cari keyword">
+		</div>
+		<div class="col-md-2">
+			<select class="form-control" name="city">
+				<option value="">Semua Kota</option>
+				{% for city in cities %}
+				<option value="{{ city }}" {% if filters.city == city %}selected{% endif %}>{{ city }}</option>
+				{% endfor %}
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select class="form-control" name="district">
+				<option value="">Semua Kecamatan</option>
+				{% for district in districts %}
+				<option value="{{ district }}" {% if filters.district == district %}selected{% endif %}>{{ district }}</option>
+				{% endfor %}
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select class="form-control" name="place_type">
+				<option value="">Semua Tipe</option>
+				{% for place_type in place_types %}
+				<option value="{{ place_type }}" {% if filters.place_type == place_type %}selected{% endif %}>{{ place_type }}</option>
+				{% endfor %}
+			</select>
+		</div>
+		<div class="col-md-2">
+			<button class="btn btn-primary" type="submit">Filter</button>
+		</div>
+	</form>
+
+	<div class="row">
+		{% for place in places %}
+		<div class="col-md-6 col-lg-4">
+			<a class="card h-100 text-decoration-none text-reset" href="/abk/place/{{ place.slug }}">
+				{% if place.cover_image %}
+				<img src="{{ place.cover_image }}" class="card-img-top" alt="{{ place.place_name }}" style="height: 190px; object-fit: cover;">
+				{% endif %}
+				<div class="card-body">
+					<div class="small text-muted mb-1">{{ place.place_type }} · {{ place.city }}</div>
+					<h2 class="h5">{{ place.place_name }}</h2>
+					<p class="text-muted mb-0">{{ place.short_description or "" }}</p>
+				</div>
+			</a>
+		</div>
+		{% else %}
+		<div class="col-12">
+			<div class="alert alert-light border">Tidak ada place yang cocok dengan filter.</div>
+		</div>
+		{% endfor %}
+	</div>
+</div>
+{% endblock %}

@@ -1,0 +1,111 @@
+{% extends "templates/web.html" %}
+
+{% block page_content %}
+<div class="container py-4">
+	<div class="row">
+		<div class="col-lg-8">
+			{% if place.cover_image %}
+			<img src="{{ place.cover_image }}" class="img-fluid rounded mb-4" alt="{{ place.place_name }}" style="width: 100%; max-height: 420px; object-fit: cover;">
+			{% endif %}
+
+			<div class="mb-3">
+				<div class="text-muted mb-1">{{ place.place_type }} · {{ place.city }}{% if place.district %}, {{ place.district }}{% endif %}</div>
+				<h1 class="h2 mb-3">{{ place.place_name }}</h1>
+				<p class="lead">{{ place.short_description or "" }}</p>
+			</div>
+
+			{% if place.address %}
+			<section class="mb-4">
+				<h2 class="h5">Alamat</h2>
+				<p class="mb-0">{{ place.address }}</p>
+			</section>
+			{% endif %}
+
+			{% if place.plus_points %}
+			<section class="mb-4">
+				<h2 class="h5">Plus Points</h2>
+				<div>{{ place.plus_points }}</div>
+			</section>
+			{% endif %}
+
+			{% if place.minus_points %}
+			<section class="mb-4">
+				<h2 class="h5">Minus Points</h2>
+				<div>{{ place.minus_points }}</div>
+			</section>
+			{% endif %}
+
+			{% if place.special_needs_tags %}
+			<section class="mb-4">
+				<h2 class="h5">Special Needs Tags</h2>
+				<p>{{ place.special_needs_tags }}</p>
+			</section>
+			{% endif %}
+
+			{% if place.google_map_url %}
+			<a class="btn btn-outline-primary" href="{{ place.google_map_url }}" target="_blank" rel="noopener">Buka Google Maps</a>
+			{% endif %}
+		</div>
+
+		<div class="col-lg-4">
+			<div class="card">
+				<div class="card-body">
+					<h2 class="h5">Minta Info via Admin</h2>
+					<p class="text-muted">Admin akan menghubungi Anda untuk informasi lanjutan.</p>
+					<div class="alert alert-success d-none" id="abk-inquiry-success">Inquiry terkirim. Admin akan menghubungi Anda.</div>
+					<div class="alert alert-danger d-none" id="abk-inquiry-error"></div>
+					<form id="abk-inquiry-form">
+						<input type="hidden" name="inquiry_type" value="{{ 'School Info' if place.place_type == 'School' else 'Therapy Info' if place.place_type == 'Therapy Center' else 'Friendly Place Info' }}">
+						<input type="hidden" name="city" value="{{ place.city or '' }}">
+						<input type="hidden" name="district" value="{{ place.district or '' }}">
+						<input type="hidden" name="related_place" value="{{ place.name }}">
+						<div class="mb-3">
+							<label class="form-label" for="parent-name">Nama</label>
+							<input class="form-control" id="parent-name" name="parent_name" required>
+						</div>
+						<div class="mb-3">
+							<label class="form-label" for="phone">No. WhatsApp / Telepon</label>
+							<input class="form-control" id="phone" name="phone" required>
+						</div>
+						<div class="mb-3">
+							<label class="form-label" for="message">Pesan</label>
+							<textarea class="form-control" id="message" name="message" rows="4"></textarea>
+						</div>
+						<button class="btn btn-primary w-100" type="submit">Minta Info via Admin</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+frappe.ready(function() {
+	const form = document.getElementById("abk-inquiry-form");
+	if (!form) return;
+
+	form.addEventListener("submit", function(event) {
+		event.preventDefault();
+		const success = document.getElementById("abk-inquiry-success");
+		const error = document.getElementById("abk-inquiry-error");
+		success.classList.add("d-none");
+		error.classList.add("d-none");
+
+		frappe.call({
+			method: "custom_special.abk_portal.public.submit_parent_inquiry",
+			args: Object.fromEntries(new FormData(form)),
+			callback: function() {
+				form.reset();
+				success.classList.remove("d-none");
+			},
+			error: function(response) {
+				error.textContent = response.message || "Inquiry belum bisa dikirim. Silakan coba lagi.";
+				error.classList.remove("d-none");
+			}
+		});
+	});
+});
+</script>
+{% endblock %}

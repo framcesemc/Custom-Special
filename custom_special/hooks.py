@@ -73,6 +73,11 @@ app_license = "mit"
 # automatically load and sync documents of this doctype from downstream apps
 # importable_doctypes = [doctype_1]
 
+website_route_rules = [
+	{"from_route": "/abk/place/<slug>", "to_route": "abk/place"},
+	{"from_route": "/abk/shadow-teacher/<slug>", "to_route": "abk/shadow_teacher"},
+]
+
 # Jinja
 # ----------
 
