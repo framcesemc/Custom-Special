@@ -1,0 +1,62 @@
+{% include "custom_special/www/abk/tailwind_config.html" %}
+
+<header class="bg-white sticky top-0 z-50 shadow-sm border-b border-gray-50">
+    <div class="container mx-auto px-4 h-20 flex justify-between items-center">
+        <a href="/abk" class="flex items-center gap-2 no-underline">
+            <span class="text-2xl font-black text-abk-primary">✨ ABK Portal</span>
+        </a>
+        
+        <!-- Desktop Nav -->
+        <nav class="hidden lg:flex items-center gap-8">
+            <a href="/abk/places" class="text-gray-600 font-bold hover:text-abk-primary no-underline transition-colors">Places</a>
+            <a href="/abk/shadow-teachers" class="text-gray-600 font-bold hover:text-abk-primary no-underline transition-colors">Shadow Teachers</a>
+            <a href="/abk/submit-info" class="btn-abk-primary">Bagikan Info</a>
+        </nav>
+
+        <!-- Mobile Toggle -->
+        <button id="abk-mobile-toggle" class="lg:hidden text-abk-primary p-2" type="button" onclick="toggleMobileMenu(true)">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+        </button>
+    </div>
+</header>
+
+<!-- Mobile Menu Drawer (Tailwind Only) -->
+<div id="abkMobileMenu" class="fixed inset-0 z-[100] hidden">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-gray-900/50 backdrop-blur-sm" onclick="toggleMobileMenu(false)"></div>
+    
+    <!-- Drawer Content -->
+    <div class="absolute right-0 top-0 h-full w-80 bg-white shadow-2xl flex flex-col transform transition-transform duration-300 translate-x-full" id="abkMobileMenuContent">
+        <div class="p-6 border-b flex justify-between items-center">
+            <h5 class="text-xl font-bold text-abk-primary">Menu</h5>
+            <button onclick="toggleMobileMenu(false)" class="text-gray-400 hover:text-abk-primary p-2">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+        <div class="p-6 flex flex-col gap-4 bg-gray-50 h-full">
+            <a href="/abk/places" class="bg-white p-4 rounded-xl font-bold text-gray-700 shadow-sm no-underline hover:border-abk-primary border border-transparent transition-all">Places</a>
+            <a href="/abk/shadow-teachers" class="bg-white p-4 rounded-xl font-bold text-gray-700 shadow-sm no-underline hover:border-abk-primary border border-transparent transition-all">Shadow Teachers</a>
+            <hr class="my-4 border-gray-200">
+            <a href="/abk/submit-info" class="btn-abk-primary text-center">Bagikan Info</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleMobileMenu(show) {
+        const menu = document.getElementById('abkMobileMenu');
+        const content = document.getElementById('abkMobileMenuContent');
+        
+        if (show) {
+            menu.classList.remove('hidden');
+            setTimeout(() => {
+                content.classList.remove('translate-x-full');
+            }, 10);
+        } else {
+            content.classList.add('translate-x-full');
+            setTimeout(() => {
+                menu.classList.add('hidden');
+            }, 300);
+        }
+    }
+</script>

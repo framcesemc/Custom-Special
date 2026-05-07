@@ -1,77 +1,143 @@
 {% extends "templates/web.html" %}
 
+{% block navbar %}
+{% include "custom_special/www/abk/header.html" %}
+{% endblock %}
+
+{% block footer %}
+{% include "custom_special/www/abk/footer.html" %}
+{% endblock %}
+
 {% block page_content %}
-<div class="container py-4">
-	<div class="row">
-		<div class="col-lg-8">
-			<div class="row align-items-start mb-4">
-				{% if teacher.public_photo %}
-				<div class="col-md-4">
-					<img src="{{ teacher.public_photo }}" class="img-fluid rounded" alt="{{ teacher.teacher_name }}" style="width: 100%; object-fit: cover;">
-				</div>
-				{% endif %}
-				<div class="col">
-					<div class="text-muted mb-1">{{ teacher.city }}{% if teacher.district %}, {{ teacher.district }}{% endif %}</div>
-					<h1 class="h2 mb-3">{{ teacher.teacher_name }}</h1>
-					{% if teacher.tariff_range %}
-					<p class="lead">{{ teacher.tariff_range }}</p>
-					{% endif %}
-				</div>
-			</div>
+<main class="bg-gray-50 min-h-screen py-12">
+    <div class="container mx-auto px-4">
+        <!-- Breadcrumb -->
+        <nav class="flex mb-8 text-sm font-bold" aria-label="Breadcrumb">
+            <ol class="flex list-none p-0 items-center gap-2">
+                <li><a href="/abk" class="text-gray-400 hover:text-abk-primary no-underline">Portal</a></li>
+                <li class="text-gray-300">/</li>
+                <li><a href="/abk/shadow-teachers" class="text-gray-400 hover:text-abk-primary no-underline">Teachers</a></li>
+                <li class="text-gray-300">/</li>
+                <li class="text-abk-primary" aria-current="page">{{ teacher.teacher_name }}</li>
+            </ol>
+        </nav>
 
-			{% if teacher.profile_summary %}
-			<section class="mb-4">
-				<h2 class="h5">Profile Summary</h2>
-				<div>{{ teacher.profile_summary }}</div>
-			</section>
-			{% endif %}
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            <!-- Left: Profile Info -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-abk p-8 lg:p-12 shadow-sm border border-gray-100 mb-8">
+                    <div class="flex flex-col md:flex-row gap-10 items-start md:items-center mb-12">
+                        <div class="w-40 h-40 rounded-[40px] overflow-hidden shadow-2xl border-4 border-white flex-shrink-0">
+                            <img src="{{ teacher.public_photo or 'https://images.unsplash.com/photo-1544717297-fa154daaf762?auto=format&fit=crop&w=400&q=80' }}" 
+                                 class="w-full h-full object-cover" alt="{{ teacher.teacher_name }}">
+                        </div>
+                        <div>
+                            <div class="text-abk-primary font-black uppercase tracking-widest text-xs mb-3 flex items-center gap-2">
+                                <i class="fa fa-map-marker-alt"></i> {{ teacher.city }}{% if teacher.district %}, {{ teacher.district }}{% endif %}
+                            </div>
+                            <h1 class="text-4xl lg:text-5xl font-black text-abk-dark mb-4 tracking-tight leading-tight">{{ teacher.teacher_name }}</h1>
+                            {% if teacher.tariff_range %}
+                            <div class="text-2xl font-black text-abk-primary mb-0 bg-abk-secondary/50 px-6 py-2 rounded-2xl inline-block">
+                                {{ teacher.tariff_range }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
 
-			{% if teacher.specialization_tags %}
-			<section class="mb-4">
-				<h2 class="h5">Specialization</h2>
-				<p>{{ teacher.specialization_tags }}</p>
-			</section>
-			{% endif %}
+                    <div class="space-y-12">
+                        {% if teacher.profile_summary %}
+                        <div class="border-l-4 border-abk-primary pl-8 py-2">
+                            <h2 class="text-xl font-black text-abk-dark mb-4 uppercase tracking-tighter">Profil & Pengalaman</h2>
+                            <p class="text-lg text-gray-500 leading-relaxed italic">"{{ teacher.profile_summary }}"</p>
+                        </div>
+                        {% endif %}
 
-			{% if teacher.service_area %}
-			<section class="mb-4">
-				<h2 class="h5">Service Area</h2>
-				<p>{{ teacher.service_area }}</p>
-			</section>
-			{% endif %}
-		</div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                            {% if teacher.specialization_tags %}
+                            <div>
+                                <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest mb-6">Spesialisasi</h3>
+                                <div class="flex flex-wrap gap-3">
+                                    {% for tag in (teacher.specialization_tags or "").split(',') %}
+                                        {% if tag %}
+                                        <span class="bg-abk-cream text-orange-600 font-bold px-4 py-2 rounded-xl border border-orange-100/50">{{ tag.strip() }}</span>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
 
-		<div class="col-lg-4">
-			<div class="card">
-				<div class="card-body">
-					<h2 class="h5">Request via Admin</h2>
-					<p class="text-muted">Admin akan membantu meneruskan kebutuhan Anda.</p>
-					<div class="alert alert-success d-none" id="abk-inquiry-success">Request terkirim. Admin akan menghubungi Anda.</div>
-					<div class="alert alert-danger d-none" id="abk-inquiry-error"></div>
-					<form id="abk-inquiry-form">
-						<input type="hidden" name="inquiry_type" value="Shadow Teacher">
-						<input type="hidden" name="city" value="{{ teacher.city or '' }}">
-						<input type="hidden" name="district" value="{{ teacher.district or '' }}">
-						<input type="hidden" name="related_teacher" value="{{ teacher.name }}">
-						<div class="mb-3">
-							<label class="form-label" for="parent-name">Nama</label>
-							<input class="form-control" id="parent-name" name="parent_name" required>
-						</div>
-						<div class="mb-3">
-							<label class="form-label" for="phone">No. WhatsApp / Telepon</label>
-							<input class="form-control" id="phone" name="phone" required>
-						</div>
-						<div class="mb-3">
-							<label class="form-label" for="message">Pesan</label>
-							<textarea class="form-control" id="message" name="message" rows="4"></textarea>
-						</div>
-						<button class="btn btn-primary w-100" type="submit">Request via Admin</button>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
+                            {% if teacher.service_area %}
+                            <div>
+                                <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest mb-6">Area Layanan</h3>
+                                <div class="flex items-center gap-4 text-gray-700 font-bold bg-gray-50 p-4 rounded-2xl">
+                                    <div class="bg-white p-2 rounded-lg shadow-sm text-abk-primary"><i class="fa fa-route"></i></div>
+                                    {{ teacher.service_area }}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mt-16 bg-blue-50 p-8 rounded-abk border border-blue-100 flex items-center gap-6">
+                        <div class="text-4xl text-blue-500">🛡️</div>
+                        <div>
+                            <h4 class="font-black text-blue-900 mb-1">Jaminan Keamanan</h4>
+                            <p class="text-blue-800/70 text-sm leading-relaxed">Demi kenyamanan bersama, proses rekrutmen dan komunikasi awal wajib dilakukan melalui sistem admin ABK Portal. Data Anda terlindungi sepenuhnya.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Request Form -->
+            <div class="lg:col-span-1">
+                <div class="sticky top-28">
+                    <div class="bg-white rounded-abk p-8 shadow-xl border border-gray-50 overflow-hidden relative">
+                        <div class="absolute top-0 left-0 w-full h-2 bg-abk-primary"></div>
+                        
+                        <h2 class="text-2xl font-black text-abk-dark mb-4">Request Interview</h2>
+                        <p class="text-gray-500 text-sm mb-8">Admin akan membantu menjadwalkan interview atau memberikan info lebih lanjut mengenai Shadow Teacher ini.</p>
+                        
+                        <div id="abk-inquiry-success" class="hidden bg-green-50 text-green-700 p-4 rounded-2xl mb-6 text-sm font-bold flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
+                            Request terkirim! Admin segera menghubungi.
+                        </div>
+                        <div id="abk-inquiry-error" class="hidden bg-red-50 text-red-700 p-4 rounded-2xl mb-6 text-sm font-bold"></div>
+
+                        <form id="abk-inquiry-form" class="space-y-4">
+                            <input type="hidden" name="inquiry_type" value="Shadow Teacher">
+                            <input type="hidden" name="city" value="{{ teacher.city or '' }}">
+                            <input type="hidden" name="district" value="{{ teacher.district or '' }}">
+                            <input type="hidden" name="related_teacher" value="{{ teacher.name }}">
+                            
+                            <div>
+                                <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 pl-2">Nama Anda</label>
+                                <input type="text" name="parent_name" required class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" placeholder="Nama lengkap">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 pl-2">No. WhatsApp</label>
+                                <input type="tel" name="phone" required class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" placeholder="08123xxx">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 pl-2">Kebutuhan Anak</label>
+                                <textarea name="message" rows="4" class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" placeholder="Jelaskan sedikit tentang kebutuhan putra-putri Anda..."></textarea>
+                            </div>
+                            
+                            <button type="submit" class="w-full btn-abk-primary mt-4 flex items-center justify-center gap-3">
+                                <span>Kirim Request</span>
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        </form>
+                        
+                        <div class="mt-8 pt-6 border-t border-gray-50 text-center flex flex-col gap-2">
+                            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">Gratis biaya administrasi pendaftaran</p>
+                            <p class="text-[10px] text-abk-primary font-black uppercase tracking-tighter">Verified Teacher Profile</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
 {% endblock %}
 
 {% block script %}
@@ -84,19 +150,30 @@ frappe.ready(function() {
 		event.preventDefault();
 		const success = document.getElementById("abk-inquiry-success");
 		const error = document.getElementById("abk-inquiry-error");
-		success.classList.add("d-none");
-		error.classList.add("d-none");
+		const btn = form.querySelector('button[type="submit"]');
+		
+		success.classList.add("hidden");
+		error.classList.add("hidden");
+		btn.disabled = true;
+		btn.innerHTML = '<span class="flex items-center gap-3"><svg class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Mengirim...</span>';
 
 		frappe.call({
 			method: "custom_special.abk_portal.public.submit_parent_inquiry",
 			args: Object.fromEntries(new FormData(form)),
 			callback: function() {
 				form.reset();
-				success.classList.remove("d-none");
+				success.classList.remove("hidden");
+				btn.innerHTML = 'Terkirim! ✅';
+				setTimeout(() => {
+					btn.disabled = false;
+					btn.innerHTML = 'Kirim Request';
+				}, 5000);
 			},
 			error: function(response) {
-				error.textContent = response.message || "Request belum bisa dikirim. Silakan coba lagi.";
-				error.classList.remove("d-none");
+				error.textContent = response.message || "Gagal mengirim. Silakan coba lagi.";
+				error.classList.remove("hidden");
+				btn.disabled = false;
+				btn.innerHTML = 'Kirim Request';
 			}
 		});
 	});

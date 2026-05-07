@@ -1,67 +1,104 @@
 {% extends "templates/web.html" %}
 
+{% block navbar %}
+{% include "custom_special/www/abk/header.html" %}
+{% endblock %}
+
+{% block footer %}
+{% include "custom_special/www/abk/footer.html" %}
+{% endblock %}
+
 {% block page_content %}
-<div class="container py-4">
-	<div class="d-flex justify-content-between align-items-center mb-4">
-		<div>
-			<h1 class="h2 mb-1">ABK Places</h1>
-			<p class="text-muted mb-0">Daftar tempat yang sudah dipublikasikan dan diverifikasi.</p>
-		</div>
-		<a class="btn btn-outline-secondary" href="/abk">Portal</a>
-	</div>
+<main class="bg-gray-50 min-h-screen py-12">
+    <div class="container mx-auto px-4">
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-12 gap-6">
+            <div>
+                <h1 class="text-4xl lg:text-5xl font-black text-abk-dark mb-3 tracking-tight">ABK Places</h1>
+                <p class="text-gray-500 text-lg">Daftar tempat terverifikasi untuk mendukung kebutuhan ananda.</p>
+            </div>
+            <a href="/abk" class="btn-abk-outline px-6 py-2 text-sm flex items-center no-underline">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                Kembali
+            </a>
+        </div>
 
-	<form class="row mb-4" method="get">
-		<div class="col-md-4">
-			<input class="form-control" type="search" name="q" value="{{ filters.q }}" placeholder="Cari keyword">
-		</div>
-		<div class="col-md-2">
-			<select class="form-control" name="city">
-				<option value="">Semua Kota</option>
-				{% for city in cities %}
-				<option value="{{ city }}" {% if filters.city == city %}selected{% endif %}>{{ city }}</option>
-				{% endfor %}
-			</select>
-		</div>
-		<div class="col-md-2">
-			<select class="form-control" name="district">
-				<option value="">Semua Kecamatan</option>
-				{% for district in districts %}
-				<option value="{{ district }}" {% if filters.district == district %}selected{% endif %}>{{ district }}</option>
-				{% endfor %}
-			</select>
-		</div>
-		<div class="col-md-2">
-			<select class="form-control" name="place_type">
-				<option value="">Semua Tipe</option>
-				{% for place_type in place_types %}
-				<option value="{{ place_type }}" {% if filters.place_type == place_type %}selected{% endif %}>{{ place_type }}</option>
-				{% endfor %}
-			</select>
-		</div>
-		<div class="col-md-2">
-			<button class="btn btn-primary" type="submit">Filter</button>
-		</div>
-	</form>
+        <!-- Filter Bar -->
+        <div class="bg-white p-6 rounded-abk shadow-sm mb-12 border border-gray-100">
+            <form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4" method="get">
+                <div class="lg:col-span-2 relative">
+                    <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </span>
+                    <input class="w-full pl-12 pr-4 py-3 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" 
+                           type="search" name="q" value="{{ filters.q }}" placeholder="Cari nama atau keyword...">
+                </div>
+                <div>
+                    <select class="w-full px-4 py-3 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium appearance-none" name="city">
+                        <option value="">Semua Kota</option>
+                        {% for city in cities %}
+                        <option value="{{ city }}" {% if filters.city == city %}selected{% endif %}>{{ city }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <select class="w-full px-4 py-3 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium appearance-none" name="place_type">
+                        <option value="">Semua Tipe</option>
+                        {% for pt in place_types %}
+                        <option value="{{ pt }}" {% if filters.place_type == pt %}selected{% endif %}>{{ pt }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button class="bg-abk-primary text-white font-black py-3 rounded-2xl hover:bg-opacity-90 transition-all shadow-md active:scale-95" type="submit">
+                    Filter
+                </button>
+            </form>
+        </div>
 
-	<div class="row">
-		{% for place in places %}
-		<div class="col-md-6 col-lg-4">
-			<a class="card h-100 text-decoration-none text-reset" href="/abk/place/{{ place.slug }}">
-				{% if place.cover_image %}
-				<img src="{{ place.cover_image }}" class="card-img-top" alt="{{ place.place_name }}" style="height: 190px; object-fit: cover;">
-				{% endif %}
-				<div class="card-body">
-					<div class="small text-muted mb-1">{{ place.place_type }} · {{ place.city }}</div>
-					<h2 class="h5">{{ place.place_name }}</h2>
-					<p class="text-muted mb-0">{{ place.short_description or "" }}</p>
-				</div>
-			</a>
-		</div>
-		{% else %}
-		<div class="col-12">
-			<div class="alert alert-light border">Tidak ada place yang cocok dengan filter.</div>
-		</div>
-		{% endfor %}
-	</div>
-</div>
+        <!-- Results Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for place in places %}
+            <a href="/abk/place/{{ place.slug }}" class="abk-card group overflow-hidden no-underline text-inherit">
+                <div class="relative aspect-video overflow-hidden">
+                    <img src="{{ place.cover_image or 'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&w=800&q=80' }}" 
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="{{ place.place_name }}">
+                    <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-4 py-1 rounded-full text-xs font-bold text-abk-primary shadow-sm">
+                        {{ place.place_type }}
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="flex items-center gap-2 text-gray-400 text-[10px] mb-3 font-black uppercase tracking-widest">
+                        <i class="fa fa-map-marker-alt"></i> {{ place.city }}{% if place.district %}, {{ place.district }}{% endif %}
+                    </div>
+                    <h3 class="text-xl font-black text-abk-dark mb-3 group-hover:text-abk-primary transition-colors line-clamp-1">{{ place.place_name }}</h3>
+                    <p class="text-gray-500 text-sm line-clamp-2 leading-relaxed mb-6">
+                        {{ (place.short_description or "") }}
+                    </p>
+                    
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        {% for tag in (place.special_needs_tags or "").split(',') %}
+                            {% if tag %}
+                            <span class="bg-abk-secondary text-abk-primary text-[10px] font-bold px-3 py-1 rounded-full">{{ tag.strip() }}</span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="pt-6 border-t border-gray-50 flex justify-between items-center">
+                        <span class="text-xs font-bold text-gray-400">Terakhir update: {{ place.modified[:10] }}</span>
+                        <span class="text-abk-primary font-black text-sm group-hover:translate-x-1 transition-transform">Lihat →</span>
+                    </div>
+                </div>
+            </a>
+            {% else %}
+            <div class="col-span-full">
+                <div class="bg-white rounded-abk p-20 text-center shadow-sm border border-dashed border-gray-200">
+                    <div class="text-6xl mb-6">🔎</div>
+                    <h3 class="text-2xl font-black text-abk-dark mb-4">Tidak ditemukan hasil</h3>
+                    <p class="text-gray-500 mb-8 max-w-md mx-auto">Coba gunakan filter lain atau bagikan informasi tempat yang Anda ketahui untuk membantu orang tua lainnya.</p>
+                    <a href="/abk/submit-info" class="btn-abk-primary no-underline inline-block">Bagikan Info Tempat</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</main>
 {% endblock %}

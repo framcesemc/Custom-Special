@@ -170,3 +170,36 @@ def submit_parent_inquiry(
 	doc.insert(ignore_permissions=True)
 
 	return {"name": doc.name}
+
+
+@frappe.whitelist()
+def submit_place_draft(**kwargs):
+	"""
+	Allows logged-in users to submit a new place for verification.
+	"""
+	if frappe.session.user == "Guest":
+		frappe.throw(_("Please login to submit a place."))
+
+	# Sanitize and prepare data
+	data = {
+		"doctype": "ABK Place",
+		"place_name": strip_html(kwargs.get("place_name")),
+		"place_type": kwargs.get("place_type"),
+		"city": strip_html(kwargs.get("city")),
+		"address": strip_html(kwargs.get("address")),
+		"short_description": strip_html(kwargs.get("short_description")),
+		"plus_points": strip_html(kwargs.get("plus_points")),
+		"minus_points": strip_html(kwargs.get("minus_points")),
+		"published": 0,
+		"verification_status": "Draft",
+		"submitted_by": frappe.session.user
+	}
+
+	if not data["place_name"] or not data["place_type"]:
+		frappe.throw(_("Place name and type are required."))
+
+	doc = frappe.get_doc(data)
+	doc.insert(ignore_permissions=True)
+
+	return {"name": doc.name}
+

@@ -28,7 +28,7 @@ add_to_apps_screen = [
 # app_include_js = "/assets/custom_special/js/custom_special.js"
 
 # include js, css files in header of web template
-# web_include_css = "/assets/custom_special/css/custom_special.css"
+web_include_css = "/assets/custom_special/css/abk_portal.css"
 # web_include_js = "/assets/custom_special/js/custom_special.js"
 
 # include custom scss in every website theme (without file extension ".scss")

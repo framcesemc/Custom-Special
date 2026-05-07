@@ -1,83 +1,135 @@
 {% extends "templates/web.html" %}
 
+{% block navbar %}
+{% include "custom_special/www/abk/header.html" %}
+{% endblock %}
+
+{% block footer %}
+{% include "custom_special/www/abk/footer.html" %}
+{% endblock %}
+
 {% block page_content %}
-<div class="container py-4">
-	<div class="row">
-		<div class="col-lg-8">
-			{% if place.cover_image %}
-			<img src="{{ place.cover_image }}" class="img-fluid rounded mb-4" alt="{{ place.place_name }}" style="width: 100%; max-height: 420px; object-fit: cover;">
-			{% endif %}
+<main class="bg-gray-50 min-h-screen py-12">
+    <div class="container mx-auto px-4">
+        <!-- Breadcrumb -->
+        <nav class="flex mb-8 text-sm font-bold" aria-label="Breadcrumb">
+            <ol class="flex list-none p-0 items-center gap-2">
+                <li><a href="/abk" class="text-gray-400 hover:text-abk-primary no-underline">Portal</a></li>
+                <li class="text-gray-300">/</li>
+                <li><a href="/abk/places" class="text-gray-400 hover:text-abk-primary no-underline">Places</a></li>
+                <li class="text-gray-300">/</li>
+                <li class="text-abk-primary" aria-current="page">{{ place.place_name }}</li>
+            </ol>
+        </nav>
 
-			<div class="mb-3">
-				<div class="text-muted mb-1">{{ place.place_type }} · {{ place.city }}{% if place.district %}, {{ place.district }}{% endif %}</div>
-				<h1 class="h2 mb-3">{{ place.place_name }}</h1>
-				<p class="lead">{{ place.short_description or "" }}</p>
-			</div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            <!-- Left: Main Info -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-abk overflow-hidden shadow-sm border border-gray-100 mb-8">
+                    <div class="relative aspect-video lg:aspect-[21/9]">
+                        <img src="{{ place.cover_image or 'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&w=1200&q=80' }}" 
+                             class="w-full h-full object-cover" alt="{{ place.place_name }}">
+                        <div class="absolute bottom-6 left-6 flex gap-2">
+                            <span class="bg-white/90 backdrop-blur px-4 py-1 rounded-full text-xs font-bold text-abk-primary shadow-lg">{{ place.place_type }}</span>
+                        </div>
+                    </div>
+                    <div class="p-8 lg:p-12">
+                        <div class="flex items-center gap-2 text-abk-primary font-bold uppercase tracking-widest text-xs mb-4">
+                            <i class="fa fa-map-marker-alt"></i> {{ place.city }}{% if place.district %}, {{ place.district }}{% endif %}
+                        </div>
+                        <h1 class="text-4xl lg:text-5xl font-black text-abk-dark mb-6 tracking-tight leading-tight">{{ place.place_name }}</h1>
+                        <p class="text-xl text-gray-500 leading-relaxed mb-10">{{ place.short_description or "" }}</p>
 
-			{% if place.address %}
-			<section class="mb-4">
-				<h2 class="h5">Alamat</h2>
-				<p class="mb-0">{{ place.address }}</p>
-			</section>
-			{% endif %}
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                            {% if place.plus_points %}
+                            <div class="bg-green-50 p-6 rounded-3xl border-t-4 border-green-500">
+                                <h3 class="font-black text-green-700 mb-4 flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
+                                    Kelebihan
+                                </h3>
+                                <div class="text-green-800/80 text-sm leading-relaxed whitespace-pre-line">{{ place.plus_points }}</div>
+                            </div>
+                            {% endif %}
 
-			{% if place.plus_points %}
-			<section class="mb-4">
-				<h2 class="h5">Plus Points</h2>
-				<div>{{ place.plus_points }}</div>
-			</section>
-			{% endif %}
+                            {% if place.minus_points %}
+                            <div class="bg-orange-50 p-6 rounded-3xl border-t-4 border-orange-500">
+                                <h3 class="font-black text-orange-700 mb-4 flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                    Perlu Diperhatikan
+                                </h3>
+                                <div class="text-orange-800/80 text-sm leading-relaxed whitespace-pre-line">{{ place.minus_points }}</div>
+                            </div>
+                            {% endif %}
+                        </div>
 
-			{% if place.minus_points %}
-			<section class="mb-4">
-				<h2 class="h5">Minus Points</h2>
-				<div>{{ place.minus_points }}</div>
-			</section>
-			{% endif %}
+                        {% if place.address %}
+                        <div class="bg-gray-50 p-8 rounded-3xl border border-gray-100">
+                            <h3 class="text-lg font-black text-abk-dark mb-4">Lokasi & Alamat</h3>
+                            <p class="text-gray-500 mb-6">{{ place.address }}</p>
+                            {% if place.google_map_url %}
+                            <a href="{{ place.google_map_url }}" target="_blank" class="text-abk-primary font-black flex items-center gap-2 no-underline hover:underline">
+                                <i class="fa fa-directions"></i> Petunjuk Arah (Google Maps)
+                            </a>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
 
-			{% if place.special_needs_tags %}
-			<section class="mb-4">
-				<h2 class="h5">Special Needs Tags</h2>
-				<p>{{ place.special_needs_tags }}</p>
-			</section>
-			{% endif %}
+            <!-- Right: Inquiry Form -->
+            <div class="lg:col-span-1">
+                <div class="sticky top-28">
+                    <div class="bg-white rounded-abk p-8 shadow-xl border border-gray-50 overflow-hidden relative">
+                        <!-- Accent background -->
+                        <div class="absolute top-0 left-0 w-full h-2 bg-abk-primary"></div>
+                        
+                        <h2 class="text-2xl font-black text-abk-dark mb-4">Minta Info Admin</h2>
+                        <p class="text-gray-500 text-sm mb-8">Tim admin kami akan membantu Anda mendapatkan informasi lebih detail mengenai tempat ini.</p>
+                        
+                        <div id="abk-inquiry-success" class="hidden bg-green-50 text-green-700 p-4 rounded-2xl mb-6 text-sm font-bold flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
+                            Pesan terkirim! Admin segera menghubungi.
+                        </div>
+                        <div id="abk-inquiry-error" class="hidden bg-red-50 text-red-700 p-4 rounded-2xl mb-6 text-sm font-bold"></div>
 
-			{% if place.google_map_url %}
-			<a class="btn btn-outline-primary" href="{{ place.google_map_url }}" target="_blank" rel="noopener">Buka Google Maps</a>
-			{% endif %}
-		</div>
-
-		<div class="col-lg-4">
-			<div class="card">
-				<div class="card-body">
-					<h2 class="h5">Minta Info via Admin</h2>
-					<p class="text-muted">Admin akan menghubungi Anda untuk informasi lanjutan.</p>
-					<div class="alert alert-success d-none" id="abk-inquiry-success">Inquiry terkirim. Admin akan menghubungi Anda.</div>
-					<div class="alert alert-danger d-none" id="abk-inquiry-error"></div>
-					<form id="abk-inquiry-form">
-						<input type="hidden" name="inquiry_type" value="{{ 'School Info' if place.place_type == 'School' else 'Therapy Info' if place.place_type == 'Therapy Center' else 'Friendly Place Info' }}">
-						<input type="hidden" name="city" value="{{ place.city or '' }}">
-						<input type="hidden" name="district" value="{{ place.district or '' }}">
-						<input type="hidden" name="related_place" value="{{ place.name }}">
-						<div class="mb-3">
-							<label class="form-label" for="parent-name">Nama</label>
-							<input class="form-control" id="parent-name" name="parent_name" required>
-						</div>
-						<div class="mb-3">
-							<label class="form-label" for="phone">No. WhatsApp / Telepon</label>
-							<input class="form-control" id="phone" name="phone" required>
-						</div>
-						<div class="mb-3">
-							<label class="form-label" for="message">Pesan</label>
-							<textarea class="form-control" id="message" name="message" rows="4"></textarea>
-						</div>
-						<button class="btn btn-primary w-100" type="submit">Minta Info via Admin</button>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
+                        <form id="abk-inquiry-form" class="space-y-4">
+                            <input type="hidden" name="inquiry_type" value="{{ 'School Info' if place.place_type == 'School' else 'Therapy Info' if place.place_type == 'Therapy Center' else 'Friendly Place Info' }}">
+                            <input type="hidden" name="city" value="{{ place.city or '' }}">
+                            <input type="hidden" name="district" value="{{ place.district or '' }}">
+                            <input type="hidden" name="related_place" value="{{ place.name }}">
+                            
+                            <div>
+                                <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 pl-2">Nama Anda</label>
+                                <input type="text" name="parent_name" required class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" placeholder="Ibu Rina">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 pl-2">No. WhatsApp</label>
+                                <input type="tel" name="phone" required class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" placeholder="081234xxx">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 pl-2">Pesan (Opsional)</label>
+                                <textarea name="message" rows="3" class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" placeholder="Apa yang ingin ditanyakan?"></textarea>
+                            </div>
+                            
+                            <button type="submit" class="w-full btn-abk-primary mt-4 flex items-center justify-center gap-3">
+                                <span>Hubungkan ke Admin</span>
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        </form>
+                        
+                        <div class="mt-8 pt-6 border-t border-gray-50 text-center">
+                            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-tighter flex items-center justify-center gap-2">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                Data aman & diproses manual
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
 {% endblock %}
 
 {% block script %}
@@ -90,19 +142,30 @@ frappe.ready(function() {
 		event.preventDefault();
 		const success = document.getElementById("abk-inquiry-success");
 		const error = document.getElementById("abk-inquiry-error");
-		success.classList.add("d-none");
-		error.classList.add("d-none");
+		const btn = form.querySelector('button[type="submit"]');
+		
+		success.classList.add("hidden");
+		error.classList.add("hidden");
+		btn.disabled = true;
+		btn.innerHTML = '<span class="flex items-center gap-3"><svg class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Mengirim...</span>';
 
 		frappe.call({
 			method: "custom_special.abk_portal.public.submit_parent_inquiry",
 			args: Object.fromEntries(new FormData(form)),
 			callback: function() {
 				form.reset();
-				success.classList.remove("d-none");
+				success.classList.remove("hidden");
+				btn.innerHTML = 'Terkirim! ✅';
+				setTimeout(() => {
+					btn.disabled = false;
+					btn.innerHTML = 'Hubungkan ke Admin';
+				}, 5000);
 			},
 			error: function(response) {
-				error.textContent = response.message || "Inquiry belum bisa dikirim. Silakan coba lagi.";
-				error.classList.remove("d-none");
+				error.textContent = response.message || "Gagal mengirim. Silakan coba lagi.";
+				error.classList.remove("hidden");
+				btn.disabled = false;
+				btn.innerHTML = 'Hubungkan ke Admin';
 			}
 		});
 	});
