@@ -1,0 +1,13 @@
+{
+ "doctype": "Desktop Icon",
+ "name": "Special Kids Centre",
+ "label": "Special Kids Centre",
+ "module_name": "Custom Special",
+ "icon_type": "Link",
+ "link_type": "Workspace Sidebar",
+ "link_to": "Special Kids Centre",
+ "sidebar": "Special Kids Centre",
+ "icon_image": "/files/images.jpg",
+ "hidden": 0,
+ "standard": 1
+}

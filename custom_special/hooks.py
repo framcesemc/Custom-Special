@@ -11,15 +11,14 @@ app_license = "mit"
 # required_apps = []
 
 # Each item in the list will be shown as an app in the apps page
-# add_to_apps_screen = [
-# 	{
-# 		"name": "custom_special",
-# 		"logo": "/assets/custom_special/logo.png",
-# 		"title": "Special Custom APp",
-# 		"route": "/custom_special",
-# 		"has_permission": "custom_special.api.permission.has_app_permission"
-# 	}
-# ]
+add_to_apps_screen = [
+    {
+        "name": "special_kids_centre",
+        "title": "Special Kids Centre",
+        "route": "special-kids-centre",
+        "logo": "/files/images.jpg"
+    }
+]
 
 # Includes in <head>
 # ------------------
