@@ -6,6 +6,7 @@ from frappe.utils import cstr, strip_html
 
 PUBLIC_PLACE_FIELDS = [
 	"name",
+	"modified",
 	"slug",
 	"place_name",
 	"place_type",
@@ -22,6 +23,7 @@ PUBLIC_PLACE_FIELDS = [
 
 PUBLIC_TEACHER_FIELDS = [
 	"name",
+	"modified",
 	"slug",
 	"teacher_name",
 	"city",
@@ -173,33 +175,95 @@ def submit_parent_inquiry(
 
 
 @frappe.whitelist()
-def submit_place_draft(**kwargs):
-	"""
-	Allows logged-in users to submit a new place for verification.
-	"""
+@rate_limit(limit=20, seconds=60 * 60)
+def submit_user_submitted_info(**kwargs):
 	if frappe.session.user == "Guest":
-		frappe.throw(_("Please login to submit a place."))
+		frappe.throw(_("Please login to submit information."))
 
-	# Sanitize and prepare data
+	media_rows = frappe.parse_json(kwargs.get("media") or "[]")
 	data = {
-		"doctype": "ABK Place",
-		"place_name": strip_html(kwargs.get("place_name")),
-		"place_type": kwargs.get("place_type"),
-		"city": strip_html(kwargs.get("city")),
-		"address": strip_html(kwargs.get("address")),
-		"short_description": strip_html(kwargs.get("short_description")),
-		"plus_points": strip_html(kwargs.get("plus_points")),
-		"minus_points": strip_html(kwargs.get("minus_points")),
-		"published": 0,
-		"verification_status": "Draft",
-		"submitted_by": frappe.session.user
+		"doctype": "User Submitted Info",
+		"submitter_name": strip_html(cstr(kwargs.get("submitter_name")).strip()),
+		"submitter_phone": strip_html(cstr(kwargs.get("submitter_phone")).strip()),
+		"submitter_email": strip_html(cstr(kwargs.get("submitter_email")).strip()),
+		"submitter_relationship": kwargs.get("submitter_relationship"),
+		"confirmation_notes": kwargs.get("confirmation_notes"),
+		"place_name": strip_html(cstr(kwargs.get("place_name")).strip()),
+		"suggested_category": kwargs.get("suggested_category"),
+		"city": strip_html(cstr(kwargs.get("city")).strip()),
+		"district": strip_html(cstr(kwargs.get("district")).strip()),
+		"area": strip_html(cstr(kwargs.get("area")).strip()),
+		"address": strip_html(cstr(kwargs.get("address")).strip()),
+		"google_map_url": strip_html(cstr(kwargs.get("google_map_url")).strip()),
+		"contact_phone": strip_html(cstr(kwargs.get("contact_phone")).strip()),
+		"contact_whatsapp": strip_html(cstr(kwargs.get("contact_whatsapp")).strip()),
+		"contact_email": strip_html(cstr(kwargs.get("contact_email")).strip()),
+		"website_url": strip_html(cstr(kwargs.get("website_url")).strip()),
+		"instagram_url": strip_html(cstr(kwargs.get("instagram_url")).strip()),
+		"reference_url": strip_html(cstr(kwargs.get("reference_url")).strip()),
+		"reference_notes": kwargs.get("reference_notes"),
+		"description": kwargs.get("description"),
+		"plus_points": kwargs.get("plus_points"),
+		"minus_points": kwargs.get("minus_points"),
+		"verification_status": "New",
 	}
 
-	if not data["place_name"] or not data["place_type"]:
-		frappe.throw(_("Place name and type are required."))
+	if not data["place_name"] or not data["suggested_category"] or not data["city"]:
+		frappe.throw(_("Place name, category, and city are required."))
 
 	doc = frappe.get_doc(data)
-	doc.insert(ignore_permissions=True)
+	for row in media_rows:
+		if not isinstance(row, dict):
+			continue
+
+		media_type = row.get("media_type")
+		media_url = strip_html(cstr(row.get("media_url")).strip())
+		caption = strip_html(cstr(row.get("caption")).strip())
+		if not media_type and not media_url and not caption:
+			continue
+
+		doc.append(
+			"media",
+			{
+				"media_type": media_type,
+				"media_url": media_url,
+				"caption": caption,
+				"sort_order": row.get("sort_order"),
+			},
+		)
+
+	doc.insert()
 
 	return {"name": doc.name}
 
+
+@frappe.whitelist()
+def submit_place_draft(**kwargs):
+	return submit_user_submitted_info(**kwargs)
+
+
+@frappe.whitelist()
+def append_submission_media(name, media_type, media_file=None, media_url=None, caption=None, sort_order=None):
+	if frappe.session.user == "Guest":
+		frappe.throw(_("Please login to add media."))
+
+	doc = frappe.get_doc("User Submitted Info", name)
+	is_admin = "ABK Admin" in frappe.get_roles() or "System Manager" in frappe.get_roles()
+	if doc.owner != frappe.session.user and not is_admin:
+		frappe.throw(_("You can only add media to your own submission."), frappe.PermissionError)
+	if doc.verification_status != "New" and not is_admin:
+		frappe.throw(_("Media can only be added before admin review."))
+
+	doc.append(
+		"media",
+		{
+			"media_type": media_type,
+			"media_file": media_file,
+			"media_url": media_url,
+			"caption": strip_html(cstr(caption)).strip(),
+			"sort_order": sort_order,
+		},
+	)
+	doc.save(ignore_permissions=True)
+
+	return {"name": doc.name}

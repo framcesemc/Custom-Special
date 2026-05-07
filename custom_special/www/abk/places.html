@@ -24,7 +24,7 @@
 
         <!-- Filter Bar -->
         <div class="bg-white p-6 rounded-abk shadow-sm mb-12 border border-gray-100">
-            <form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4" method="get">
+            <form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4" method="get">
                 <div class="lg:col-span-2 relative">
                     <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
@@ -37,6 +37,14 @@
                         <option value="">Semua Kota</option>
                         {% for city in cities %}
                         <option value="{{ city }}" {% if filters.city == city %}selected{% endif %}>{{ city }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <select class="w-full px-4 py-3 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium appearance-none" name="district">
+                        <option value="">Semua Kecamatan</option>
+                        {% for district in districts %}
+                        <option value="{{ district }}" {% if filters.district == district %}selected{% endif %}>{{ district }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -83,7 +91,7 @@
                     </div>
                     
                     <div class="pt-6 border-t border-gray-50 flex justify-between items-center">
-                        <span class="text-xs font-bold text-gray-400">Terakhir update: {{ place.modified[:10] }}</span>
+                        <span class="text-xs font-bold text-gray-400">Terakhir update: {{ frappe.format_date(place.modified) if place.modified else "Belum tersedia" }}</span>
                         <span class="text-abk-primary font-black text-sm group-hover:translate-x-1 transition-transform">Lihat →</span>
                     </div>
                 </div>
@@ -93,7 +101,7 @@
                 <div class="bg-white rounded-abk p-20 text-center shadow-sm border border-dashed border-gray-200">
                     <div class="text-6xl mb-6">🔎</div>
                     <h3 class="text-2xl font-black text-abk-dark mb-4">Tidak ditemukan hasil</h3>
-                    <p class="text-gray-500 mb-8 max-w-md mx-auto">Coba gunakan filter lain atau bagikan informasi tempat yang Anda ketahui untuk membantu orang tua lainnya.</p>
+                    <p class="text-gray-500 mb-8 max-w-md mx-auto">Belum ada data untuk lokasi ini. Bantu parent lain dengan membagikan referensi.</p>
                     <a href="/abk/submit-info" class="btn-abk-primary no-underline inline-block">Bagikan Info Tempat</a>
                 </div>
             </div>

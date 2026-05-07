@@ -6,49 +6,111 @@
  "document_type": "Document",
  "engine": "InnoDB",
  "field_order": [
+  "submitter_section",
   "submitter_name",
-  "phone",
-  "suggested_place_name",
+  "submitter_phone",
+  "submitter_email",
+  "submitter_relationship",
+  "confirmation_notes",
+  "place_section",
+  "place_name",
+  "suggested_category",
+  "description",
   "location_section",
   "city",
   "district",
-  "info_type",
-  "description",
+  "area",
+  "address",
+  "google_map_url",
+  "contact_section",
+  "contact_phone",
+  "contact_whatsapp",
+  "contact_email",
+  "website_url",
+  "instagram_url",
+  "reference_url",
+  "reference_notes",
+  "notes_section",
   "plus_points",
   "minus_points",
-  "media_upload",
+  "media_section",
+  "media",
   "admin_section",
   "verification_status",
+  "approved_place",
+  "reviewed_by",
+  "reviewed_on",
   "admin_notes"
  ],
  "fields": [
+  {
+   "fieldname": "submitter_section",
+   "fieldtype": "Section Break",
+   "label": "Data Pemberi Info"
+  },
   {
    "fieldname": "submitter_name",
    "fieldtype": "Data",
    "label": "Submitter Name"
   },
   {
-   "fieldname": "phone",
+   "fieldname": "submitter_phone",
    "fieldtype": "Data",
-   "label": "Phone"
+   "label": "Submitter Phone"
   },
   {
-   "fieldname": "suggested_place_name",
+   "fieldname": "submitter_email",
+   "fieldtype": "Data",
+   "label": "Submitter Email"
+  },
+  {
+   "fieldname": "submitter_relationship",
+   "fieldtype": "Select",
+   "label": "Submitter Relationship",
+   "options": "Parent\nGuardian\nTeacher\nTherapist\nSchool Staff\nOther"
+  },
+  {
+   "fieldname": "confirmation_notes",
+   "fieldtype": "Text Editor",
+   "label": "Confirmation Notes"
+  },
+  {
+   "fieldname": "place_section",
+   "fieldtype": "Section Break",
+   "label": "Informasi Tempat"
+  },
+  {
+   "fieldname": "place_name",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Suggested Place Name"
+   "label": "Place Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "suggested_category",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Suggested Category",
+   "options": "School\nTherapy Center\nABK Friendly Place\nShadow Teacher\nTips"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text Editor",
+   "label": "Description"
   },
   {
    "fieldname": "location_section",
    "fieldtype": "Section Break",
-   "label": "Location"
+   "label": "Lokasi"
   },
   {
    "fieldname": "city",
    "fieldtype": "Data",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "City"
+   "label": "City",
+   "reqd": 1
   },
   {
    "fieldname": "district",
@@ -57,17 +119,64 @@
    "label": "District"
   },
   {
-   "fieldname": "info_type",
-   "fieldtype": "Select",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "Info Type",
-   "options": "School\nTherapy Center\nABK Friendly Place\nShadow Teacher\nTips"
+   "fieldname": "area",
+   "fieldtype": "Data",
+   "label": "Area"
   },
   {
-   "fieldname": "description",
+   "fieldname": "address",
+   "fieldtype": "Small Text",
+   "label": "Address"
+  },
+  {
+   "fieldname": "google_map_url",
+   "fieldtype": "Data",
+   "label": "Google Map URL"
+  },
+  {
+   "fieldname": "contact_section",
+   "fieldtype": "Section Break",
+   "label": "Kontak dan Referensi"
+  },
+  {
+   "fieldname": "contact_phone",
+   "fieldtype": "Data",
+   "label": "Contact Phone"
+  },
+  {
+   "fieldname": "contact_whatsapp",
+   "fieldtype": "Data",
+   "label": "Contact WhatsApp"
+  },
+  {
+   "fieldname": "contact_email",
+   "fieldtype": "Data",
+   "label": "Contact Email"
+  },
+  {
+   "fieldname": "website_url",
+   "fieldtype": "Data",
+   "label": "Website URL"
+  },
+  {
+   "fieldname": "instagram_url",
+   "fieldtype": "Data",
+   "label": "Instagram URL"
+  },
+  {
+   "fieldname": "reference_url",
+   "fieldtype": "Data",
+   "label": "Reference URL"
+  },
+  {
+   "fieldname": "reference_notes",
    "fieldtype": "Text Editor",
-   "label": "Description"
+   "label": "Reference Notes"
+  },
+  {
+   "fieldname": "notes_section",
+   "fieldtype": "Section Break",
+   "label": "Plus/Minus dan Catatan"
   },
   {
    "fieldname": "plus_points",
@@ -80,9 +189,15 @@
    "label": "Minus Points"
   },
   {
-   "fieldname": "media_upload",
-   "fieldtype": "Attach",
-   "label": "Media Upload"
+   "fieldname": "media_section",
+   "fieldtype": "Section Break",
+   "label": "Media"
+  },
+  {
+   "fieldname": "media",
+   "fieldtype": "Table",
+   "label": "Media",
+   "options": "User Submitted Info Media"
   },
   {
    "fieldname": "admin_section",
@@ -97,6 +212,26 @@
    "in_standard_filter": 1,
    "label": "Verification Status",
    "options": "New\nReviewing\nApproved\nRejected"
+  },
+  {
+   "fieldname": "approved_place",
+   "fieldtype": "Link",
+   "label": "Approved Place",
+   "options": "ABK Place",
+   "read_only": 1
+  },
+  {
+   "fieldname": "reviewed_by",
+   "fieldtype": "Link",
+   "label": "Reviewed By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "reviewed_on",
+   "fieldtype": "Datetime",
+   "label": "Reviewed On",
+   "read_only": 1
   },
   {
    "fieldname": "admin_notes",
@@ -130,10 +265,20 @@
    "read": 1,
    "role": "ABK Admin",
    "write": 1
+  },
+  {
+   "create": 1,
+   "role": "Website User"
+  },
+  {
+   "read": 1,
+   "if_owner": 1,
+   "role": "Website User"
   }
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
+ "title_field": "place_name",
  "track_changes": 1
 }
