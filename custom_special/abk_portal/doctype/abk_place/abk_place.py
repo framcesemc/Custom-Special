@@ -1,5 +1,6 @@
 from frappe.model.document import Document
 
+from custom_special.abk_portal.media import validate_media_row
 from custom_special.abk_portal.utils import make_unique_slug
 
 
@@ -9,6 +10,10 @@ class ABKPlace(Document):
 
 	def before_validate(self):
 		self.set_slug()
+
+	def validate(self):
+		for row in self.get("gallery") or []:
+			validate_media_row(row)
 
 	def set_slug(self):
 		if not self.slug:

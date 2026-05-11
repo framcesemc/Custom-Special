@@ -27,6 +27,8 @@
   "age_range",
   "price_range",
   "cover_image",
+  "gallery_section",
+  "gallery",
   "admin_section",
   "admin_notes"
  ],
@@ -151,6 +153,17 @@
    "fieldname": "cover_image",
    "fieldtype": "Attach Image",
    "label": "Cover Image"
+  },
+  {
+   "fieldname": "gallery_section",
+   "fieldtype": "Section Break",
+   "label": "Gallery"
+  },
+  {
+   "fieldname": "gallery",
+   "fieldtype": "Table",
+   "label": "Gallery",
+   "options": "ABK Place Media"
   },
   {
    "fieldname": "admin_section",

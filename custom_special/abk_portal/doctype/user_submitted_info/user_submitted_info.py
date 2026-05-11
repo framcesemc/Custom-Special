@@ -3,6 +3,8 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import escape_html, now
 
+from custom_special.abk_portal.media import get_media_kind, validate_media_row
+
 
 ADMIN_ROLES = {"ABK Admin", "System Manager"}
 
@@ -19,6 +21,8 @@ class UserSubmittedInfo(Document):
 			for fieldname in ("approved_place", "reviewed_by", "reviewed_on", "admin_notes"):
 				if self.get(fieldname):
 					frappe.throw(_("Admin review fields can only be set by ABK Admin."))
+		for row in self.get("media") or []:
+			validate_media_row(row)
 
 
 def has_abk_admin_role():
@@ -57,9 +61,26 @@ def approve_and_create_abk_place(name):
 	place.admin_notes = build_admin_notes(submission)
 
 	for media in submission.media:
-		if media.media_type == "Image" and media.media_file:
+		media_source = media.media_file or media.media_url
+		if get_media_kind(media_source) == "Image" and media.media_file:
 			place.cover_image = media.media_file
 			break
+
+	for media in submission.media:
+		media_source = media.media_file or media.media_url
+		if not media_source:
+			continue
+
+		place.append(
+			"gallery",
+			{
+				"media_type": media.media_type or get_media_kind(media_source),
+				"media_file": media.media_file,
+				"media_url": media.media_url,
+				"caption": media.caption,
+				"sort_order": media.sort_order,
+			},
+		)
 
 	place.insert(ignore_permissions=True)
 

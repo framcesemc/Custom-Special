@@ -3,6 +3,8 @@ from frappe import _
 from frappe.rate_limiter import rate_limit
 from frappe.utils import cstr, strip_html
 
+from custom_special.abk_portal.media import normalize_public_media
+
 
 ABK_ARTICLE_CATEGORIES = [
 	"Parenting",
@@ -437,6 +439,34 @@ def get_published_place_by_slug(slug: str):
 		PUBLIC_PLACE_FIELDS,
 		as_dict=True,
 	)
+
+
+def get_published_place_gallery(place):
+	if not place:
+		return []
+
+	gallery = []
+	if frappe.get_meta("ABK Place").has_field("gallery"):
+		doc = frappe.get_doc("ABK Place", place.name)
+		for row in sorted(doc.get("gallery") or [], key=lambda item: item.sort_order or item.idx or 0):
+			media = normalize_public_media(row)
+			if media:
+				gallery.append(media)
+
+	if not gallery and place.get("cover_image"):
+		gallery.append(
+			frappe._dict(
+				{
+					"media_type": "Image",
+					"render_type": "Image",
+					"source": place.cover_image,
+					"caption": place.place_name,
+					"sort_order": 0,
+				}
+			)
+		)
+
+	return gallery
 
 
 def get_published_teacher_by_slug(slug: str):

@@ -53,6 +53,59 @@
                     </div>
                 </div>
 
+                <!-- Gallery -->
+                {% if gallery %}
+                <section class="bg-white rounded-abk p-6 lg:p-7 shadow-sm border border-orange-50">
+                    <div class="flex items-end justify-between gap-4 mb-6">
+                        <div>
+                            <h2 class="text-2xl font-black text-abk-dark mb-2">Galeri</h2>
+                            <p class="text-slate-500 text-sm">Foto dan video untuk membantu orang tua melihat suasana tempat.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        {% for media in gallery %}
+                        <figure class="bg-slate-50 rounded-3xl overflow-hidden shadow-sm border border-slate-100 {% if loop.first %}md:col-span-2{% endif %}">
+                            <div class="bg-slate-100 {% if loop.first %}aspect-video{% else %}aspect-[4/3]{% endif %}">
+                                {% if media.render_type == "Image" %}
+                                <img src="{{ media.source }}"
+                                     class="w-full h-full object-cover"
+                                     loading="lazy"
+                                     alt="{{ media.caption or place.place_name }}">
+                                {% elif media.render_type == "Video" %}
+                                <video class="w-full h-full object-cover bg-black"
+                                       controls
+                                       preload="metadata">
+                                    <source src="{{ media.source }}">
+                                    Browser Anda tidak mendukung pemutar video.
+                                </video>
+                                {% elif media.render_type == "YouTube" %}
+                                <iframe class="w-full h-full bg-black"
+                                        src="{{ media.embed_url }}"
+                                        title="{{ media.caption or place.place_name }}"
+                                        loading="lazy"
+                                        allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                        allowfullscreen></iframe>
+                                {% else %}
+                                <div class="w-full h-full flex items-center justify-center p-8 text-center">
+                                    <a href="{{ media.source }}" target="_blank" rel="noopener noreferrer"
+                                       class="inline-flex items-center justify-center bg-white text-orange-600 font-black text-sm px-5 py-3 rounded-full shadow-sm no-underline hover:text-orange-700 transition-colors">
+                                        Buka Media Eksternal →
+                                    </a>
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% if media.caption %}
+                            <figcaption class="px-5 py-4 text-sm font-semibold text-slate-500 leading-relaxed">
+                                {{ media.caption }}
+                            </figcaption>
+                            {% endif %}
+                        </figure>
+                        {% endfor %}
+                    </div>
+                </section>
+                {% endif %}
+
                 <!-- Tags -->
                 {% if place.special_needs_tags %}
                 <div class="bg-white rounded-abk p-6 shadow-sm border border-orange-50">

@@ -1,6 +1,6 @@
 import frappe
 
-from custom_special.abk_portal.public import get_published_place_by_slug, raise_not_found
+from custom_special.abk_portal.public import get_published_place_by_slug, get_published_place_gallery, raise_not_found
 
 
 def get_context(context):
@@ -12,6 +12,7 @@ def get_context(context):
 		raise_not_found()
 
 	context.title = context.place.place_name
+	context.gallery = get_published_place_gallery(context.place)
 	context.parents = [
 		{"name": "ABK Portal", "route": "/abk"},
 		{"name": "Places", "route": "/abk/places"},
