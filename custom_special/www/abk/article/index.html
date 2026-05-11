@@ -1,0 +1,88 @@
+{% extends "templates/web.html" %}
+
+{% block navbar %}
+{% include "custom_special/www/abk/header.html" %}
+{% endblock %}
+
+{% block footer %}
+{% include "custom_special/www/abk/footer.html" %}
+{% endblock %}
+
+{% block page_content %}
+<main class="bg-white min-h-screen">
+    <article>
+        <header class="bg-abk-cream py-12 lg:py-20">
+            <div class="container mx-auto px-4 max-w-5xl">
+                <a href="/abk/articles" class="inline-flex items-center text-abk-primary font-bold no-underline mb-8">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    Kembali ke Articles
+                </a>
+                {% if article.category %}
+                <div class="text-sm font-black text-abk-primary uppercase tracking-widest mb-4">{{ article.category }}</div>
+                {% endif %}
+                <h1 class="text-4xl lg:text-6xl font-black text-abk-dark leading-tight mb-6">{{ article.title }}</h1>
+                <p class="text-lg lg:text-xl text-gray-600 leading-relaxed max-w-3xl mb-8">{{ article.intro }}</p>
+                <div class="flex flex-wrap items-center gap-4 text-sm text-gray-500 font-bold">
+                    <span>{{ article.author }}</span>
+                    <span class="w-1.5 h-1.5 bg-abk-accent rounded-full"></span>
+                    <time datetime="{{ article.published_on }}">{{ frappe.format_date(article.published_on) if article.published_on else frappe.format_date(article.creation) }}</time>
+                </div>
+            </div>
+        </header>
+
+        <div class="container mx-auto px-4 max-w-5xl -mt-8 lg:-mt-12 relative z-10">
+            <div class="rounded-abk overflow-hidden shadow-xl bg-white">
+                <img src="{{ article.cover_image }}" class="w-full aspect-[16/8] object-cover" alt="{{ article.title }}">
+            </div>
+        </div>
+
+        <section class="container mx-auto px-4 max-w-3xl py-12 lg:py-16">
+            <div class="abk-article-content">
+                {{ article.content | safe }}
+            </div>
+
+            {% if article.tags %}
+            <div class="mt-12 pt-8 border-t border-gray-100 flex flex-wrap gap-2">
+                {% for tag in article.tags %}
+                <a href="/abk/articles?tag={{ tag | urlencode }}" class="bg-abk-secondary text-abk-primary text-xs font-bold px-4 py-2 rounded-full no-underline hover:bg-abk-primary hover:text-white transition-colors">{{ tag }}</a>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </section>
+    </article>
+
+    {% if related_articles %}
+    <section class="bg-gray-50 py-16">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-end mb-10">
+                <div>
+                    <h2 class="text-3xl font-black text-abk-dark mb-3">Artikel Terkait</h2>
+                    <p class="text-gray-500">Bacaan lain yang masih selaras dengan topik ini.</p>
+                </div>
+                <a href="/abk/articles" class="text-abk-primary font-bold no-underline hidden md:inline-block">Lihat semua →</a>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {% for related in related_articles %}
+                <a href="/abk/article/{{ related.slug }}" class="abk-card group overflow-hidden no-underline text-inherit">
+                    <div class="relative aspect-video overflow-hidden">
+                        <img src="{{ related.cover_image }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ related.title }}">
+                    </div>
+                    <div class="p-6">
+                        <div class="text-gray-400 text-[11px] font-black uppercase tracking-widest mb-3">{{ related.category }}</div>
+                        <h3 class="text-lg font-black text-abk-dark group-hover:text-abk-primary transition-colors leading-snug line-clamp-2 mb-4">{{ related.title }}</h3>
+                        {% if related.tags %}
+                        <div class="flex flex-wrap gap-2">
+                            {% for tag in related.tags[:2] %}
+                            <span class="bg-abk-secondary text-abk-primary text-[10px] font-bold px-3 py-1 rounded-full">{{ tag }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+</main>
+{% endblock %}

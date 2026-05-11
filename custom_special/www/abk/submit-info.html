@@ -22,7 +22,31 @@
                 <div class="bg-indigo-50 w-24 h-24 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-8 shadow-inner shadow-indigo-100">🔑</div>
                 <h2 class="text-3xl font-black text-abk-dark mb-4">Masuk untuk Berbagi</h2>
                 <p class="text-gray-500 mb-12 max-w-sm mx-auto leading-relaxed">Silakan login atau daftar akun agar info yang Anda bagikan bisa diverifikasi dengan jelas.</p>
-                <a href="/login?redirect-to=/abk/submit-info" class="btn-abk-primary no-underline inline-block px-12 py-5 text-lg">Login / Daftar</a>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="/login?redirect-to=/abk/submit-info" class="btn-abk-primary no-underline inline-block px-12 py-5 text-lg">Login</a>
+                    <a href="/abk/register" class="btn-abk-outline no-underline inline-block px-12 py-5 text-lg">Daftar Member</a>
+                </div>
+            </div>
+            {% elif member_status == "missing" %}
+            <div class="bg-white rounded-abk p-12 lg:p-20 text-center shadow-xl border border-gray-100">
+                <div class="bg-yellow-50 w-24 h-24 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-8 shadow-inner shadow-yellow-100">!</div>
+                <h2 class="text-3xl font-black text-abk-dark mb-4">Lengkapi Registrasi Member</h2>
+                <p class="text-gray-500 mb-12 max-w-md mx-auto leading-relaxed">Akun Anda belum memiliki profil member ABK. Daftar sebagai member terlebih dahulu agar admin bisa melakukan verifikasi.</p>
+                <a href="/abk/register" class="btn-abk-primary no-underline inline-block px-12 py-5 text-lg">Daftar Member</a>
+            </div>
+            {% elif member_status == "pending" %}
+            <div class="bg-white rounded-abk p-12 lg:p-20 text-center shadow-xl border border-gray-100">
+                <div class="bg-blue-50 w-24 h-24 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-8 shadow-inner shadow-blue-100">⌛</div>
+                <h2 class="text-3xl font-black text-abk-dark mb-4">Menunggu Verifikasi</h2>
+                <p class="text-gray-500 mb-12 max-w-md mx-auto leading-relaxed">Akun Anda sedang menunggu verifikasi admin.</p>
+                <a href="/abk" class="btn-abk-outline no-underline inline-block px-12 py-5 text-lg">Kembali ke Portal</a>
+            </div>
+            {% elif member_status == "rejected" %}
+            <div class="bg-white rounded-abk p-12 lg:p-20 text-center shadow-xl border border-gray-100">
+                <div class="bg-red-50 w-24 h-24 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-8 shadow-inner shadow-red-100">×</div>
+                <h2 class="text-3xl font-black text-abk-dark mb-4">Belum Dapat Mengirim Info</h2>
+                <p class="text-gray-500 mb-12 max-w-md mx-auto leading-relaxed">Akun Anda belum dapat mengirim info. Hubungi admin.</p>
+                <a href="/abk" class="btn-abk-outline no-underline inline-block px-12 py-5 text-lg">Kembali ke Portal</a>
             </div>
             {% else %}
             <div class="bg-white rounded-abk shadow-2xl border border-gray-50 overflow-hidden">

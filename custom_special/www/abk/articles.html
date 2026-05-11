@@ -1,0 +1,102 @@
+{% extends "templates/web.html" %}
+
+{% block navbar %}
+{% include "custom_special/www/abk/header.html" %}
+{% endblock %}
+
+{% block footer %}
+{% include "custom_special/www/abk/footer.html" %}
+{% endblock %}
+
+{% block page_content %}
+<main class="bg-gray-50 min-h-screen">
+    <section class="bg-abk-cream py-16 lg:py-24">
+        <div class="container mx-auto px-4">
+            <div class="max-w-3xl">
+                <div class="text-sm font-black text-abk-primary uppercase tracking-widest mb-4">Knowledge Center</div>
+                <h1 class="text-4xl lg:text-6xl font-black text-abk-dark mb-6 leading-tight">Artikel tepercaya untuk orang tua ABK</h1>
+                <p class="text-lg lg:text-xl text-gray-600 leading-relaxed">Panduan hangat seputar parenting, terapi, sekolah inklusi, aktivitas, kesehatan, dan dukungan komunitas.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-10">
+        <div class="container mx-auto px-4">
+            <div class="bg-white p-6 rounded-abk shadow-sm mb-10 border border-gray-100">
+                <form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4" method="get">
+                    <div class="lg:col-span-2 relative">
+                        <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </span>
+                        <input class="w-full pl-12 pr-4 py-3 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium"
+                               type="search" name="q" value="{{ filters.q }}" placeholder="Cari topik artikel...">
+                    </div>
+                    <div class="lg:col-span-2">
+                        <select class="w-full px-4 py-3 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium appearance-none" name="category">
+                            <option value="">Semua Kategori</option>
+                            {% for category in categories %}
+                            <option value="{{ category }}" {% if filters.category == category %}selected{% endif %}>{{ category }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <select class="w-full px-4 py-3 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium appearance-none" name="tag">
+                            <option value="">Semua Tag</option>
+                            {% for tag in tags %}
+                            <option value="{{ tag }}" {% if filters.tag == tag %}selected{% endif %}>{{ tag }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button class="bg-abk-primary text-white font-black py-3 rounded-2xl hover:bg-opacity-90 transition-all shadow-md active:scale-95" type="submit">
+                        Filter
+                    </button>
+                </form>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {% for article in articles %}
+                <article class="abk-card group overflow-hidden">
+                    <a href="/abk/article/{{ article.slug }}" class="relative aspect-[16/10] overflow-hidden block no-underline">
+                        <img src="{{ article.cover_image }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ article.title }}">
+                        {% if article.category %}
+                        <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-4 py-1 rounded-full text-xs font-bold text-abk-primary shadow-sm">
+                            {{ article.category }}
+                        </div>
+                        {% endif %}
+                    </a>
+                    <div class="p-6">
+                        <div class="text-gray-400 text-[11px] font-black uppercase tracking-widest mb-3">
+                            {{ frappe.format_date(article.published_on) if article.published_on else frappe.format_date(article.creation) }} · {{ article.author }}
+                        </div>
+                        <a href="/abk/article/{{ article.slug }}" class="no-underline">
+                            <h2 class="text-xl font-black text-abk-dark mb-3 hover:text-abk-primary transition-colors leading-snug line-clamp-2">{{ article.title }}</h2>
+                        </a>
+                        <p class="text-gray-500 text-sm line-clamp-3 leading-relaxed mb-5">{{ article.intro }}</p>
+                        {% if article.tags %}
+                        <div class="flex flex-wrap gap-2">
+                            {% for tag in article.tags[:3] %}
+                            <a href="/abk/articles?tag={{ tag | urlencode }}" class="bg-abk-secondary text-abk-primary text-[10px] font-bold px-3 py-1 rounded-full no-underline hover:bg-abk-primary hover:text-white transition-colors">{{ tag }}</a>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </article>
+                {% else %}
+                <div class="col-span-full">
+                    <div class="bg-white rounded-abk p-12 lg:p-20 text-center shadow-sm border border-dashed border-gray-200">
+                        <h2 class="text-2xl font-black text-abk-dark mb-4">Belum ada artikel yang cocok</h2>
+                        <p class="text-gray-500 max-w-xl mx-auto">
+                            {% if blog_enabled %}
+                            Coba gunakan kata kunci atau kategori lain.
+                            {% else %}
+                            Blog Post belum tersedia di site ini. Aktifkan atau pasang fitur Blog Frappe untuk menampilkan Knowledge Center.
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends "templates/web.html" %}
+
+{% block navbar %}
+{% include "custom_special/www/abk/header.html" %}
+{% endblock %}
+
+{% block footer %}
+{% include "custom_special/www/abk/footer.html" %}
+{% endblock %}
+
+{% block page_content %}
+<main class="bg-gray-50 min-h-screen py-12 lg:py-20">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto text-center mb-12">
+            <h1 class="text-4xl lg:text-6xl font-black text-abk-dark mb-6 tracking-tight">Daftar Member ABK</h1>
+            <p class="text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed">Buat akun frontend untuk berbagi referensi dan mengakses fitur member ABK Portal setelah diverifikasi admin.</p>
+        </div>
+
+        <div class="max-w-3xl mx-auto">
+            {% if not is_guest and member_status != "missing" %}
+            <div class="bg-white rounded-abk p-12 text-center shadow-xl border border-gray-100">
+                <h2 class="text-3xl font-black text-abk-dark mb-4">Anda sudah login</h2>
+                {% if member_status == "verified" %}
+                <p class="text-gray-500 mb-10">Akun member Anda sudah terverifikasi.</p>
+                <a href="/abk/submit-info" class="btn-abk-primary no-underline inline-block px-12 py-5 text-lg">Bagikan Info</a>
+                {% elif member_status == "pending" %}
+                <p class="text-gray-500 mb-10">Registrasi berhasil. Akun Anda menunggu verifikasi admin.</p>
+                <a href="/abk" class="btn-abk-outline no-underline inline-block px-12 py-5 text-lg">Kembali ke Portal</a>
+                {% elif member_status == "rejected" %}
+                <p class="text-gray-500 mb-10">Akun Anda belum dapat mengirim info. Hubungi admin.</p>
+                <a href="/abk" class="btn-abk-outline no-underline inline-block px-12 py-5 text-lg">Kembali ke Portal</a>
+                {% else %}
+                <p class="text-gray-500 mb-10">Silakan logout jika ingin mendaftarkan akun baru.</p>
+                <a href="/logout" class="btn-abk-outline no-underline inline-block px-12 py-5 text-lg">Logout</a>
+                {% endif %}
+            </div>
+            {% else %}
+            <div class="bg-white rounded-abk shadow-2xl border border-gray-50 overflow-hidden">
+                <div class="bg-abk-primary p-8">
+                    <h2 class="text-2xl font-black text-white mb-0">Form Registrasi Member</h2>
+                </div>
+                <div class="p-8 lg:p-12">
+                    <div id="register-success" class="hidden text-center py-10">
+                        <div class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-4xl mx-auto mb-8">✓</div>
+                        <h2 class="text-3xl font-black text-abk-dark mb-4">Registrasi Berhasil</h2>
+                        <p class="text-gray-500 text-lg mb-10">Registrasi berhasil. Akun Anda menunggu verifikasi admin.</p>
+                        <a href="/login?redirect-to=/abk/submit-info" class="btn-abk-primary no-underline inline-block px-12 py-5 text-lg">Login</a>
+                    </div>
+
+                    <form id="abk-register-form" class="space-y-8">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <input class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium md:col-span-2" name="full_name" required placeholder="Nama lengkap">
+                            {% if is_guest %}
+                            <input class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" name="email" type="email" required placeholder="Email">
+                            {% endif %}
+                            <input class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" name="phone" required placeholder="No. telepon / WhatsApp">
+                            {% if is_guest %}
+                            <input class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" name="password" type="password" required placeholder="Password">
+                            {% endif %}
+                            <select class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" name="relationship" required>
+                                <option value="">Hubungan</option>
+                                {% for relationship in relationships %}
+                                <option value="{{ relationship }}">{{ relationship }}</option>
+                                {% endfor %}
+                            </select>
+                            <input class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" name="city" placeholder="Kota">
+                            <input class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" name="district" placeholder="Kecamatan">
+                        </div>
+                        <div class="bg-indigo-50 p-6 rounded-2xl border border-indigo-100">
+                            <p class="text-xs text-indigo-900/70 font-bold leading-relaxed mb-0">Akun ini hanya untuk akses frontend ABK Portal. Admin akan memverifikasi sebelum fitur sensitif seperti submit referensi aktif.</p>
+                        </div>
+                        <button type="submit" class="w-full btn-abk-primary text-xl py-5 shadow-2xl shadow-abk-primary/40">Daftar Member</button>
+                        <p class="text-center text-gray-500 mb-0">Sudah punya akun? <a href="/login?redirect-to=/abk/submit-info" class="font-bold text-abk-primary">Login</a></p>
+                    </form>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</main>
+{% endblock %}
+
+{% block script %}
+<script>
+frappe.ready(function() {
+	const form = document.getElementById("abk-register-form");
+	if (!form) return;
+
+	form.addEventListener("submit", function(event) {
+		event.preventDefault();
+		const btn = form.querySelector('button[type="submit"]');
+		const originalText = btn.textContent;
+		btn.disabled = true;
+		btn.textContent = "Mendaftarkan...";
+
+		frappe.call({
+			method: {{ '"custom_special.abk_portal.api.register_abk_member"' if is_guest else '"custom_special.abk_portal.api.complete_abk_member_profile"' }},
+			args: Object.fromEntries(new FormData(form)),
+			callback() {
+				form.classList.add("hidden");
+				document.getElementById("register-success").classList.remove("hidden");
+				window.scrollTo(0, 0);
+			},
+			error(response) {
+				btn.disabled = false;
+				btn.textContent = originalText;
+				frappe.msgprint(response.message || "Registrasi belum berhasil. Silakan coba lagi.");
+			},
+		});
+	});
+});
+</script>
+{% endblock %}

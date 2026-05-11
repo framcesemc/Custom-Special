@@ -28,7 +28,10 @@ add_to_apps_screen = [
 # app_include_js = "/assets/custom_special/js/custom_special.js"
 
 # include js, css files in header of web template
-web_include_css = "/assets/custom_special/css/abk_portal.css"
+web_include_css = [
+	"/assets/custom_special/css/abk_portal.css",
+	"/assets/custom_special/css/abk_articles.css",
+]
 # web_include_js = "/assets/custom_special/js/custom_special.js"
 
 # include custom scss in every website theme (without file extension ".scss")
@@ -75,6 +78,7 @@ web_include_css = "/assets/custom_special/css/abk_portal.css"
 website_route_rules = [
 	{"from_route": "/abk/place/<slug>", "to_route": "abk/place"},
 	{"from_route": "/abk/shadow-teacher/<slug>", "to_route": "abk/shadow_teacher"},
+	{"from_route": "/abk/article/<slug>", "to_route": "abk/article"},
 ]
 
 # Jinja
@@ -85,6 +89,8 @@ website_route_rules = [
 # 	"methods": "custom_special.utils.jinja_methods",
 # 	"filters": "custom_special.utils.jinja_filters"
 # }
+
+get_website_user_home_page = "custom_special.abk_portal.api.get_website_user_home_page"
 
 # Installation
 # ------------
@@ -209,7 +215,7 @@ after_install = "custom_special.install.after_install"
 
 # Request Events
 # ----------------
-# before_request = ["custom_special.utils.before_request"]
+before_request = ["custom_special.abk_portal.api.redirect_members_from_desk"]
 # after_request = ["custom_special.utils.after_request"]
 
 # Job Events

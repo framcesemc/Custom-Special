@@ -4,6 +4,23 @@ from frappe.rate_limiter import rate_limit
 from frappe.utils import cstr, strip_html
 
 
+ABK_ARTICLE_CATEGORIES = [
+	"Parenting",
+	"Therapy",
+	"Education",
+	"Inclusive School",
+	"Sensory Friendly",
+	"Activities",
+	"Health",
+	"Community",
+]
+
+ARTICLE_FALLBACK_COVER = (
+	"https://images.unsplash.com/photo-1604881991720-f91add269bed"
+	"?auto=format&fit=crop&w=1200&q=80"
+)
+
+
 PUBLIC_PLACE_FIELDS = [
 	"name",
 	"modified",
@@ -38,6 +55,305 @@ PUBLIC_TEACHER_FIELDS = [
 
 def get_filter_value(fieldname: str) -> str:
 	return cstr(frappe.form_dict.get(fieldname)).strip()
+
+
+def blog_post_doctype_exists() -> bool:
+	return bool(frappe.db.exists("DocType", "Blog Post"))
+
+
+def blog_category_doctype_exists() -> bool:
+	return bool(frappe.db.exists("DocType", "Blog Category"))
+
+
+def _get_blog_meta():
+	if not blog_post_doctype_exists():
+		return None
+
+	return frappe.get_meta("Blog Post")
+
+
+def _first_existing_field(meta, candidates):
+	for fieldname in candidates:
+		if meta.has_field(fieldname):
+			return fieldname
+
+
+def _get_blog_post_fields(meta, include_content=False):
+	fields = ["name", "creation", "modified"]
+	for candidate_group in (
+		("title",),
+		("route",),
+		("blog_category", "category"),
+		("blogger", "author"),
+		("published_on", "publish_date"),
+		("blog_intro", "intro", "description"),
+		("meta_description",),
+		("meta_image", "cover_image", "image", "featured_image"),
+		("article_tags",),
+		("featured", "is_featured"),
+	):
+		fieldname = _first_existing_field(meta, candidate_group)
+		if fieldname and fieldname not in fields:
+			fields.append(fieldname)
+
+	if include_content:
+		for candidate_group in (("content", "content_html"), ("meta_title",)):
+			fieldname = _first_existing_field(meta, candidate_group)
+			if fieldname and fieldname not in fields:
+				fields.append(fieldname)
+
+	return fields
+
+
+def _get_blog_post_filters(meta):
+	filters = {}
+	if meta.has_field("published"):
+		filters["published"] = 1
+
+	category_field = _first_existing_field(meta, ("blog_category", "category"))
+	category = get_filter_value("category")
+	if category_field:
+		filters[category_field] = category if category else ["in", ABK_ARTICLE_CATEGORIES]
+
+	tag = get_filter_value("tag")
+	if tag and meta.has_field("article_tags"):
+		filters["article_tags"] = ["like", f"%{tag}%"]
+
+	return filters
+
+
+def _get_blog_post_or_filters(meta):
+	keyword = get_filter_value("q")
+	if not keyword:
+		return None
+
+	like_value = f"%{keyword}%"
+	or_filters = {}
+	for fieldname in ("title", "blog_intro", "intro", "description", "content", "content_html", "article_tags"):
+		if meta.has_field(fieldname):
+			or_filters[fieldname] = ["like", like_value]
+	return or_filters
+
+
+def _split_article_tags(article_tags):
+	return [
+		tag.strip()
+		for tag in cstr(article_tags).split(",")
+		if tag and tag.strip()
+	]
+
+
+def _tag_matches(article, selected_tag):
+	if not selected_tag:
+		return True
+
+	selected_tag = cstr(selected_tag).strip().lower()
+	return selected_tag in {tag.lower() for tag in article.tags}
+
+
+def _article_slug(article):
+	route = cstr(article.get("route")).strip("/")
+	if route:
+		return route.split("/")[-1]
+
+	return cstr(article.get("name")).strip()
+
+
+def _normalize_article(row):
+	title = row.get("title") or row.get("name")
+	intro = row.get("blog_intro") or row.get("intro") or row.get("description") or row.get("meta_description")
+	cover_image = (
+		row.get("meta_image")
+		or row.get("cover_image")
+		or row.get("image")
+		or row.get("featured_image")
+		or ARTICLE_FALLBACK_COVER
+	)
+	published_on = row.get("published_on") or row.get("publish_date") or row.get("creation")
+	category = row.get("blog_category") or row.get("category")
+	content = row.get("content") or row.get("content_html") or ""
+	tags = _split_article_tags(row.get("article_tags"))
+
+	article = frappe._dict(row)
+	article.update(
+		{
+			"title": title,
+			"slug": _article_slug(row),
+			"cover_image": cover_image,
+			"author": row.get("blogger") or row.get("author") or "ABK Portal",
+			"category": category,
+			"published_on": published_on,
+			"intro": strip_html(cstr(intro)) if intro else "",
+			"content": content,
+			"tags": tags,
+			"is_featured": row.get("featured") or row.get("is_featured"),
+		}
+	)
+	return article
+
+
+def get_article_categories():
+	return ABK_ARTICLE_CATEGORIES
+
+
+def get_published_articles(limit: int = 20, filters_from_request: bool = True):
+	meta = _get_blog_meta()
+	if not meta:
+		return []
+
+	filters = _get_blog_post_filters(meta) if filters_from_request else {}
+	if not filters_from_request and meta.has_field("published"):
+		filters["published"] = 1
+
+	category_field = _first_existing_field(meta, ("blog_category", "category"))
+	if not filters_from_request and category_field:
+		filters[category_field] = ["in", ABK_ARTICLE_CATEGORIES]
+
+	order_field = _first_existing_field(meta, ("published_on", "publish_date")) or "creation"
+	selected_tag = get_filter_value("tag") if filters_from_request and meta.has_field("article_tags") else ""
+	rows = frappe.db.get_all(
+		"Blog Post",
+		fields=_get_blog_post_fields(meta),
+		filters=filters,
+		or_filters=_get_blog_post_or_filters(meta) if filters_from_request else None,
+		order_by=f"{order_field} desc",
+		limit_page_length=limit * 4 if selected_tag else limit,
+	)
+	articles = [_normalize_article(row) for row in rows]
+	if selected_tag:
+		articles = [article for article in articles if _tag_matches(article, selected_tag)]
+	return articles[:limit]
+
+
+def get_featured_articles(limit: int = 3):
+	meta = _get_blog_meta()
+	if not meta:
+		return []
+
+	filters = {}
+	if meta.has_field("published"):
+		filters["published"] = 1
+
+	category_field = _first_existing_field(meta, ("blog_category", "category"))
+	if category_field:
+		filters[category_field] = ["in", ABK_ARTICLE_CATEGORIES]
+
+	featured_field = _first_existing_field(meta, ("featured", "is_featured"))
+	if featured_field:
+		filters[featured_field] = 1
+
+	order_field = _first_existing_field(meta, ("published_on", "publish_date")) or "creation"
+	rows = frappe.db.get_all(
+		"Blog Post",
+		fields=_get_blog_post_fields(meta),
+		filters=filters,
+		order_by=f"{order_field} desc",
+		limit_page_length=limit,
+	)
+
+	if not rows:
+		return get_published_articles(limit=limit, filters_from_request=False)
+
+	return [_normalize_article(row) for row in rows]
+
+
+def get_article_tags():
+	meta = _get_blog_meta()
+	if not meta or not meta.has_field("article_tags"):
+		return []
+
+	filters = {}
+	if meta.has_field("published"):
+		filters["published"] = 1
+
+	category_field = _first_existing_field(meta, ("blog_category", "category"))
+	if category_field:
+		filters[category_field] = ["in", ABK_ARTICLE_CATEGORIES]
+
+	rows = frappe.db.get_all(
+		"Blog Post",
+		filters=filters,
+		fields=["article_tags"],
+		limit_page_length=500,
+	)
+	tags = []
+	seen = set()
+	for row in rows:
+		for tag in _split_article_tags(row.article_tags):
+			normalized_tag = tag.lower()
+			if normalized_tag in seen:
+				continue
+			seen.add(normalized_tag)
+			tags.append(tag)
+
+	return sorted(tags, key=lambda tag: tag.lower())
+
+
+def get_published_article_by_slug(slug: str):
+	meta = _get_blog_meta()
+	if not meta or not slug:
+		return None
+
+	filters = {}
+	if meta.has_field("published"):
+		filters["published"] = 1
+
+	category_field = _first_existing_field(meta, ("blog_category", "category"))
+	if category_field:
+		filters[category_field] = ["in", ABK_ARTICLE_CATEGORIES]
+
+	rows = frappe.db.get_all(
+		"Blog Post",
+		fields=_get_blog_post_fields(meta, include_content=True),
+		filters=filters,
+		order_by="modified desc",
+		limit_page_length=100,
+	)
+
+	for article in [_normalize_article(row) for row in rows]:
+		if article.slug == slug or article.name == slug or cstr(article.get("route")).strip("/") == slug:
+			return article
+
+	return None
+
+
+def get_related_articles(article, limit: int = 3):
+	meta = _get_blog_meta()
+	if not meta or not article:
+		return []
+
+	order_field = _first_existing_field(meta, ("published_on", "publish_date")) or "creation"
+	filters = {"name": ["!=", article.name]}
+	if meta.has_field("published"):
+		filters["published"] = 1
+
+	category_field = _first_existing_field(meta, ("blog_category", "category"))
+	if category_field:
+		filters[category_field] = ["in", ABK_ARTICLE_CATEGORIES]
+
+	rows = frappe.db.get_all(
+		"Blog Post",
+		fields=_get_blog_post_fields(meta),
+		filters=filters,
+		order_by=f"{order_field} desc",
+		limit_page_length=60,
+	)
+	article_tags = {tag.lower() for tag in article.tags}
+	related_articles = []
+	for related in [_normalize_article(row) for row in rows]:
+		shared_tags = article_tags.intersection({tag.lower() for tag in related.tags})
+		same_category = related.category and related.category == article.category
+		if not same_category and not shared_tags:
+			continue
+
+		related.related_score = (2 if same_category else 0) + len(shared_tags)
+		related_articles.append(related)
+
+	related_articles.sort(
+		key=lambda related: (related.related_score, related.published_on or related.creation),
+		reverse=True,
+	)
+	return related_articles[:limit]
 
 
 def get_published_places(limit: int = 20):
@@ -179,6 +495,10 @@ def submit_parent_inquiry(
 def submit_user_submitted_info(**kwargs):
 	if frappe.session.user == "Guest":
 		frappe.throw(_("Please login to submit information."))
+
+	from custom_special.abk_portal.api import require_verified_member
+
+	require_verified_member()
 
 	media_rows = frappe.parse_json(kwargs.get("media") or "[]")
 	data = {

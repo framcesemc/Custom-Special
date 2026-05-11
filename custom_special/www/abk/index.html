@@ -166,6 +166,74 @@
         </div>
     </section>
 
+    <!-- Latest Articles -->
+    <section class="py-20 bg-abk-cream">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-4">
+                <div>
+                    <div class="text-sm font-black text-abk-primary uppercase tracking-widest mb-3">Knowledge Center</div>
+                    <h2 class="text-3xl lg:text-4xl font-black text-abk-dark mb-4">Artikel Edukasi Terbaru</h2>
+                    <p class="text-gray-500 max-w-2xl">Bacaan singkat dan tepercaya untuk mendampingi tumbuh kembang anak berkebutuhan khusus.</p>
+                </div>
+                <a href="/abk/articles" class="text-abk-primary font-bold no-underline group">
+                    Lihat semua <span class="inline-block transition-transform group-hover:translate-x-1">→</span>
+                </a>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2">
+                    {% set featured = featured_articles[0] if featured_articles else (latest_articles[0] if latest_articles else None) %}
+                    {% if featured %}
+                    <a href="/abk/article/{{ featured.slug }}" class="abk-card group overflow-hidden no-underline text-inherit block">
+                        <div class="grid grid-cols-1 md:grid-cols-2">
+                            <div class="relative aspect-[16/11] md:aspect-auto overflow-hidden">
+                                <img src="{{ featured.cover_image }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ featured.title }}">
+                            </div>
+                            <div class="p-8 lg:p-10 flex flex-col justify-center">
+                                <div class="text-xs font-black text-abk-primary uppercase tracking-widest mb-4">{{ featured.category or "Featured" }}</div>
+                                <h3 class="text-2xl lg:text-3xl font-black text-abk-dark mb-4 group-hover:text-abk-primary transition-colors leading-tight">{{ featured.title }}</h3>
+                                <p class="text-gray-500 leading-relaxed mb-6 line-clamp-3">{{ featured.intro }}</p>
+                                {% if featured.tags %}
+                                <div class="flex flex-wrap gap-2 mb-6">
+                                    {% for tag in featured.tags[:3] %}
+                                    <span class="bg-abk-secondary text-abk-primary text-[10px] font-bold px-3 py-1 rounded-full">{{ tag }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                                <div class="text-sm font-bold text-gray-400">{{ frappe.format_date(featured.published_on) if featured.published_on else frappe.format_date(featured.creation) }} · {{ featured.author }}</div>
+                            </div>
+                        </div>
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="space-y-4">
+                    {% for article in latest_articles[:3] %}
+                    <a href="/abk/article/{{ article.slug }}" class="bg-white rounded-abk p-5 shadow-sm border border-gray-100 flex gap-4 no-underline text-inherit group">
+                        <img src="{{ article.cover_image }}" class="w-24 h-24 rounded-2xl object-cover flex-shrink-0" alt="{{ article.title }}">
+                            <div>
+                                <div class="text-[10px] font-black text-abk-primary uppercase tracking-widest mb-2">{{ article.category }}</div>
+                                <h3 class="text-base font-black text-abk-dark leading-snug group-hover:text-abk-primary transition-colors line-clamp-2">{{ article.title }}</h3>
+                                {% if article.tags %}
+                                <div class="flex flex-wrap gap-1 mt-2">
+                                    {% for tag in article.tags[:2] %}
+                                    <span class="bg-abk-secondary text-abk-primary text-[9px] font-bold px-2 py-0.5 rounded-full">{{ tag }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                                <p class="text-xs text-gray-400 font-bold mt-2">{{ frappe.format_date(article.published_on) if article.published_on else frappe.format_date(article.creation) }}</p>
+                            </div>
+                        </a>
+                    {% else %}
+                    <div class="bg-white rounded-abk p-8 shadow-sm border border-dashed border-gray-200">
+                        <h3 class="text-xl font-black text-abk-dark mb-3">Knowledge Center segera hadir</h3>
+                        <p class="text-gray-500 text-sm leading-relaxed">Tambahkan Blog Post dengan kategori ABK untuk menampilkan artikel edukasi di sini.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Contribution CTA -->
     <section class="py-32">
         <div class="container mx-auto px-4">
