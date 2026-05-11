@@ -9,73 +9,90 @@
 {% endblock %}
 
 {% block page_content %}
-<main class="bg-gray-50 min-h-screen">
-    <section class="bg-abk-cream py-16 lg:py-24">
-        <div class="container mx-auto px-4">
-            <div class="max-w-3xl">
-                <div class="text-sm font-black text-abk-primary uppercase tracking-widest mb-4">Knowledge Center</div>
-                <h1 class="text-4xl lg:text-6xl font-black text-abk-dark mb-6 leading-tight">Artikel tepercaya untuk orang tua ABK</h1>
-                <p class="text-lg lg:text-xl text-gray-600 leading-relaxed">Panduan hangat seputar parenting, terapi, sekolah inklusi, aktivitas, kesehatan, dan dukungan komunitas.</p>
+<main class="bg-amber-50/30 min-h-screen font-sans">
+
+    <!-- Page Header -->
+    <section class="relative overflow-hidden" style="background: linear-gradient(150deg, #FFF7ED 0%, #FFFBF5 60%, #F0FDF4 100%);">
+        <div class="absolute -top-16 -right-16 w-64 h-64 bg-orange-200 rounded-full opacity-30 blur-3xl pointer-events-none anim-blob"></div>
+        <div class="absolute -bottom-10 -left-10 w-48 h-48 bg-green-200 rounded-full opacity-25 blur-2xl pointer-events-none anim-blob-slow"></div>
+        <div class="relative z-10 container mx-auto px-4 py-14 lg:py-20">
+            <div class="max-w-2xl">
+                <div class="text-xs font-black text-orange-500 uppercase tracking-widest mb-3">📚 Knowledge Center</div>
+                <h1 class="text-4xl lg:text-5xl font-black text-abk-dark mb-4 leading-tight">
+                    Artikel Tepercaya<br>untuk Orang Tua ABK
+                </h1>
+                <p class="text-slate-500 text-lg leading-relaxed">
+                    Panduan parenting, terapi, sekolah inklusi, aktivitas, dan dukungan komunitas untuk keluarga hebat Indonesia.
+                </p>
             </div>
         </div>
     </section>
 
+    <!-- Filter + Results -->
     <section class="py-10">
         <div class="container mx-auto px-4">
-            <div class="bg-white p-6 rounded-abk shadow-sm mb-10 border border-gray-100">
-                <form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4" method="get">
+
+            <!-- Filter Bar -->
+            <div class="bg-white rounded-abk shadow-sm border border-orange-100 p-5 mb-10">
+                <form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-3" method="get">
+                    <!-- Search -->
                     <div class="lg:col-span-2 relative">
-                        <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400 pointer-events-none">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                         </span>
-                        <input class="w-full pl-12 pr-4 py-3 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium"
+                        <input class="w-full pl-11 pr-4 py-3 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm"
                                type="search" name="q" value="{{ filters.q }}" placeholder="Cari topik artikel...">
                     </div>
+                    <!-- Category -->
                     <div class="lg:col-span-2">
-                        <select class="w-full px-4 py-3 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium appearance-none" name="category">
+                        <select class="w-full px-4 py-3 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold appearance-none text-sm" name="category">
                             <option value="">Semua Kategori</option>
                             {% for category in categories %}
                             <option value="{{ category }}" {% if filters.category == category %}selected{% endif %}>{{ category }}</option>
                             {% endfor %}
                         </select>
                     </div>
+                    <!-- Tag -->
                     <div>
-                        <select class="w-full px-4 py-3 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium appearance-none" name="tag">
+                        <select class="w-full px-4 py-3 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold appearance-none text-sm" name="tag">
                             <option value="">Semua Tag</option>
                             {% for tag in tags %}
                             <option value="{{ tag }}" {% if filters.tag == tag %}selected{% endif %}>{{ tag }}</option>
                             {% endfor %}
                         </select>
                     </div>
-                    <button class="bg-abk-primary text-white font-black py-3 rounded-2xl hover:bg-opacity-90 transition-all shadow-md active:scale-95" type="submit">
-                        Filter
-                    </button>
+                    <!-- Submit -->
+                    <button class="btn-abk-primary py-3 text-sm" type="submit">Filter</button>
                 </form>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Articles Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
                 {% for article in articles %}
-                <article class="abk-card group overflow-hidden">
-                    <a href="/abk/article/{{ article.slug }}" class="relative aspect-[16/10] overflow-hidden block no-underline">
+                <article class="abk-card group overflow-hidden flex flex-col">
+                    <a href="/abk/article/{{ article.slug }}" class="relative aspect-[16/10] overflow-hidden block no-underline rounded-t-[22px]">
                         <img src="{{ article.cover_image }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ article.title }}">
                         {% if article.category %}
-                        <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-4 py-1 rounded-full text-xs font-bold text-abk-primary shadow-sm">
+                        <div class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-black text-orange-600">
                             {{ article.category }}
                         </div>
                         {% endif %}
                     </a>
-                    <div class="p-6">
-                        <div class="text-gray-400 text-[11px] font-black uppercase tracking-widest mb-3">
+                    <div class="p-5 flex flex-col flex-grow">
+                        <div class="text-slate-400 text-[11px] font-black uppercase tracking-widest mb-3">
                             {{ frappe.format_date(article.published_on) if article.published_on else frappe.format_date(article.creation) }} · {{ article.author }}
                         </div>
-                        <a href="/abk/article/{{ article.slug }}" class="no-underline">
-                            <h2 class="text-xl font-black text-abk-dark mb-3 hover:text-abk-primary transition-colors leading-snug line-clamp-2">{{ article.title }}</h2>
+                        <a href="/abk/article/{{ article.slug }}" class="no-underline flex-grow">
+                            <h2 class="text-lg font-black text-abk-dark mb-2 group-hover:text-orange-500 transition-colors leading-snug line-clamp-2">{{ article.title }}</h2>
                         </a>
-                        <p class="text-gray-500 text-sm line-clamp-3 leading-relaxed mb-5">{{ article.intro }}</p>
+                        <p class="text-slate-500 text-sm line-clamp-3 leading-relaxed mb-4">{{ article.intro }}</p>
                         {% if article.tags %}
-                        <div class="flex flex-wrap gap-2">
+                        <div class="flex flex-wrap gap-2 mt-auto">
                             {% for tag in article.tags[:3] %}
-                            <a href="/abk/articles?tag={{ tag | urlencode }}" class="bg-abk-secondary text-abk-primary text-[10px] font-bold px-3 py-1 rounded-full no-underline hover:bg-abk-primary hover:text-white transition-colors">{{ tag }}</a>
+                            <a href="/abk/articles?tag={{ tag | urlencode }}"
+                               class="abk-badge bg-orange-50 text-orange-700 hover:bg-orange-500 hover:text-white transition-colors no-underline text-[10px]">
+                                {{ tag }}
+                            </a>
                             {% endfor %}
                         </div>
                         {% endif %}
@@ -83,13 +100,14 @@
                 </article>
                 {% else %}
                 <div class="col-span-full">
-                    <div class="bg-white rounded-abk p-12 lg:p-20 text-center shadow-sm border border-dashed border-gray-200">
-                        <h2 class="text-2xl font-black text-abk-dark mb-4">Belum ada artikel yang cocok</h2>
-                        <p class="text-gray-500 max-w-xl mx-auto">
+                    <div class="bg-white rounded-abk p-16 text-center border border-dashed border-orange-200">
+                        <div class="text-5xl mb-4">📖</div>
+                        <h2 class="text-xl font-black text-abk-dark mb-3">Belum ada artikel yang cocok</h2>
+                        <p class="text-slate-400 text-sm max-w-sm mx-auto">
                             {% if blog_enabled %}
                             Coba gunakan kata kunci atau kategori lain.
                             {% else %}
-                            Blog Post belum tersedia di site ini. Aktifkan atau pasang fitur Blog Frappe untuk menampilkan Knowledge Center.
+                            Blog Post belum tersedia. Aktifkan fitur Blog Frappe untuk menampilkan Knowledge Center.
                             {% endif %}
                         </p>
                     </div>

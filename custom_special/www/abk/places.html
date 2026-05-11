@@ -9,104 +9,122 @@
 {% endblock %}
 
 {% block page_content %}
-<main class="bg-gray-50 min-h-screen py-12">
-    <div class="container mx-auto px-4">
-        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-12 gap-6">
-            <div>
-                <h1 class="text-4xl lg:text-5xl font-black text-abk-dark mb-3 tracking-tight">ABK Places</h1>
-                <p class="text-gray-500 text-lg">Daftar tempat terverifikasi untuk mendukung kebutuhan ananda.</p>
+<main class="bg-amber-50/30 min-h-screen font-sans">
+
+    <!-- Page Header -->
+    <section class="relative overflow-hidden" style="background: linear-gradient(150deg, #FFF7ED 0%, #FFFBF5 60%, #EFF6FF 100%);">
+        <div class="absolute -top-16 -right-16 w-56 h-56 bg-orange-200 rounded-full opacity-30 blur-3xl pointer-events-none anim-blob"></div>
+        <div class="absolute -bottom-10 -left-10 w-48 h-48 bg-blue-200 rounded-full opacity-25 blur-2xl pointer-events-none anim-blob-slow"></div>
+        <div class="relative z-10 container mx-auto px-4 py-14">
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-5">
+                <div>
+                    <div class="text-xs font-black text-orange-500 uppercase tracking-widest mb-2">🏫 Direktori</div>
+                    <h1 class="text-4xl lg:text-5xl font-black text-abk-dark mb-2">ABK Places</h1>
+                    <p class="text-slate-500 text-base">Daftar tempat terverifikasi untuk mendukung kebutuhan ananda.</p>
+                </div>
+                <a href="/abk" class="btn-abk-outline text-sm py-2.5 px-6 flex items-center gap-2 no-underline">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                    Kembali
+                </a>
             </div>
-            <a href="/abk" class="btn-abk-outline px-6 py-2 text-sm flex items-center no-underline">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                Kembali
-            </a>
         </div>
+    </section>
 
-        <!-- Filter Bar -->
-        <div class="bg-white p-6 rounded-abk shadow-sm mb-12 border border-gray-100">
-            <form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4" method="get">
-                <div class="lg:col-span-2 relative">
-                    <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    </span>
-                    <input class="w-full pl-12 pr-4 py-3 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" 
-                           type="search" name="q" value="{{ filters.q }}" placeholder="Cari nama atau keyword...">
-                </div>
-                <div>
-                    <select class="w-full px-4 py-3 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium appearance-none" name="city">
-                        <option value="">Semua Kota</option>
-                        {% for city in cities %}
-                        <option value="{{ city }}" {% if filters.city == city %}selected{% endif %}>{{ city }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div>
-                    <select class="w-full px-4 py-3 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium appearance-none" name="district">
-                        <option value="">Semua Kecamatan</option>
-                        {% for district in districts %}
-                        <option value="{{ district }}" {% if filters.district == district %}selected{% endif %}>{{ district }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div>
-                    <select class="w-full px-4 py-3 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium appearance-none" name="place_type">
-                        <option value="">Semua Tipe</option>
-                        {% for pt in place_types %}
-                        <option value="{{ pt }}" {% if filters.place_type == pt %}selected{% endif %}>{{ pt }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <button class="bg-abk-primary text-white font-black py-3 rounded-2xl hover:bg-opacity-90 transition-all shadow-md active:scale-95" type="submit">
-                    Filter
-                </button>
-            </form>
-        </div>
+    <section class="py-10">
+        <div class="container mx-auto px-4">
 
-        <!-- Results Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {% for place in places %}
-            <a href="/abk/place/{{ place.slug }}" class="abk-card group overflow-hidden no-underline text-inherit">
-                <div class="relative aspect-video overflow-hidden">
-                    <img src="{{ place.cover_image or 'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&w=800&q=80' }}" 
-                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="{{ place.place_name }}">
-                    <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-4 py-1 rounded-full text-xs font-bold text-abk-primary shadow-sm">
-                        {{ place.place_type }}
+            <!-- Filter Bar -->
+            <div class="bg-white rounded-abk shadow-sm border border-orange-100 p-5 mb-10">
+                <form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-3" method="get">
+                    <!-- Search -->
+                    <div class="lg:col-span-2 relative">
+                        <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400 pointer-events-none">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                        </span>
+                        <input class="w-full pl-11 pr-4 py-3 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm"
+                               type="search" name="q" value="{{ filters.q }}" placeholder="Cari nama atau keyword...">
                     </div>
-                </div>
-                <div class="p-6">
-                    <div class="flex items-center gap-2 text-gray-400 text-[10px] mb-3 font-black uppercase tracking-widest">
-                        <i class="fa fa-map-marker-alt"></i> {{ place.city }}{% if place.district %}, {{ place.district }}{% endif %}
+                    <!-- City -->
+                    <div>
+                        <select class="w-full px-4 py-3 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold appearance-none text-sm" name="city">
+                            <option value="">📍 Semua Kota</option>
+                            {% for city in cities %}
+                            <option value="{{ city }}" {% if filters.city == city %}selected{% endif %}>{{ city }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
-                    <h3 class="text-xl font-black text-abk-dark mb-3 group-hover:text-abk-primary transition-colors line-clamp-1">{{ place.place_name }}</h3>
-                    <p class="text-gray-500 text-sm line-clamp-2 leading-relaxed mb-6">
-                        {{ (place.short_description or "") }}
-                    </p>
-                    
-                    <div class="flex flex-wrap gap-2 mb-6">
-                        {% for tag in (place.special_needs_tags or "").split(',') %}
+                    <!-- District -->
+                    <div>
+                        <select class="w-full px-4 py-3 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold appearance-none text-sm" name="district">
+                            <option value="">🗺️ Semua Kecamatan</option>
+                            {% for district in districts %}
+                            <option value="{{ district }}" {% if filters.district == district %}selected{% endif %}>{{ district }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <!-- Type -->
+                    <div>
+                        <select class="w-full px-4 py-3 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold appearance-none text-sm" name="place_type">
+                            <option value="">🏷️ Semua Tipe</option>
+                            {% for pt in place_types %}
+                            <option value="{{ pt }}" {% if filters.place_type == pt %}selected{% endif %}>{{ pt }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <!-- Submit -->
+                    <button class="btn-abk-primary py-3 text-sm" type="submit">Filter</button>
+                </form>
+            </div>
+
+            <!-- Results Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
+                {% for place in places %}
+                <a href="/abk/place/{{ place.slug }}" class="abk-card group overflow-hidden no-underline text-inherit block">
+                    <div class="relative aspect-video overflow-hidden rounded-t-[22px]">
+                        <img src="{{ place.cover_image or 'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&w=800&q=80' }}"
+                             class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="{{ place.place_name }}">
+                        <div class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-black text-orange-600">
+                            {{ place.place_type }}
+                        </div>
+                        {% if place.is_verified %}
+                        <div class="absolute top-3 right-3 abk-badge bg-green-500 text-white text-[10px]">✅ Verified</div>
+                        {% endif %}
+                    </div>
+                    <div class="p-5">
+                        <div class="flex items-center gap-1.5 text-slate-400 text-xs mb-2 font-bold uppercase">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+                            {{ place.city }}{% if place.district %}, {{ place.district }}{% endif %}
+                        </div>
+                        <h3 class="text-lg font-black text-abk-dark mb-2 group-hover:text-orange-500 transition-colors line-clamp-1">{{ place.place_name }}</h3>
+                        <p class="text-slate-500 text-sm line-clamp-2 leading-relaxed mb-4">{{ (place.short_description or "") }}</p>
+
+                        <!-- Tags -->
+                        <div class="flex flex-wrap gap-1.5 mb-4">
+                            {% for tag in (place.special_needs_tags or "").split(',') %}
                             {% if tag %}
-                            <span class="bg-abk-secondary text-abk-primary text-[10px] font-bold px-3 py-1 rounded-full">{{ tag.strip() }}</span>
+                            <span class="abk-badge bg-orange-50 text-orange-700 text-[10px]">{{ tag.strip() }}</span>
                             {% endif %}
-                        {% endfor %}
+                            {% endfor %}
+                        </div>
+
+                        <div class="pt-4 border-t border-slate-50 flex justify-between items-center">
+                            <span class="text-xs font-bold text-slate-400">Update: {{ frappe.format_date(place.modified) if place.modified else "—" }}</span>
+                            <span class="text-orange-500 font-black text-sm group-hover:translate-x-1 inline-block transition-transform">Lihat →</span>
+                        </div>
                     </div>
-                    
-                    <div class="pt-6 border-t border-gray-50 flex justify-between items-center">
-                        <span class="text-xs font-bold text-gray-400">Terakhir update: {{ frappe.format_date(place.modified) if place.modified else "Belum tersedia" }}</span>
-                        <span class="text-abk-primary font-black text-sm group-hover:translate-x-1 transition-transform">Lihat →</span>
+                </a>
+                {% else %}
+                <div class="col-span-full">
+                    <div class="bg-white rounded-abk p-16 text-center border border-dashed border-orange-200">
+                        <div class="text-5xl mb-4">🔎</div>
+                        <h3 class="text-xl font-black text-abk-dark mb-3">Tidak ditemukan hasil</h3>
+                        <p class="text-slate-400 text-sm mb-7 max-w-sm mx-auto">Belum ada data untuk filter ini. Bantu parent lain dengan membagikan referensi!</p>
+                        <a href="/abk/submit-info" class="btn-abk-primary no-underline">Bagikan Info Tempat</a>
                     </div>
                 </div>
-            </a>
-            {% else %}
-            <div class="col-span-full">
-                <div class="bg-white rounded-abk p-20 text-center shadow-sm border border-dashed border-gray-200">
-                    <div class="text-6xl mb-6">🔎</div>
-                    <h3 class="text-2xl font-black text-abk-dark mb-4">Tidak ditemukan hasil</h3>
-                    <p class="text-gray-500 mb-8 max-w-md mx-auto">Belum ada data untuk lokasi ini. Bantu parent lain dengan membagikan referensi.</p>
-                    <a href="/abk/submit-info" class="btn-abk-primary no-underline inline-block">Bagikan Info Tempat</a>
-                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
         </div>
-    </div>
+    </section>
 </main>
 {% endblock %}

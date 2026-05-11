@@ -9,239 +9,288 @@
 {% endblock %}
 
 {% block page_content %}
-<main class="bg-gray-50 min-h-screen py-12 lg:py-20">
-    <div class="container mx-auto px-4">
-        <div class="max-w-5xl mx-auto text-center mb-12">
-            <h1 class="text-4xl lg:text-6xl font-black text-abk-dark mb-6 tracking-tight">Bagikan Referensi</h1>
-            <p class="text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed">Bantu parent lain menemukan referensi sekolah, tempat terapi, tempat ramah ABK, atau dukungan terkait.</p>
+<main class="bg-amber-50/30 min-h-screen font-sans">
+
+    <!-- Page Header -->
+    <section class="relative overflow-hidden" style="background: linear-gradient(150deg, #FFF7ED 0%, #FFFBF5 50%, #F0FDF4 100%);">
+        <div class="absolute -top-16 -right-16 w-56 h-56 bg-orange-200 rounded-full opacity-30 blur-3xl pointer-events-none anim-blob"></div>
+        <div class="absolute -bottom-10 -left-10 w-48 h-48 bg-green-200 rounded-full opacity-25 blur-2xl pointer-events-none anim-blob-slow"></div>
+        <div class="relative z-10 container mx-auto px-4 py-14 text-center max-w-3xl mx-auto">
+            <div class="text-xs font-black text-orange-500 uppercase tracking-widest mb-3">✏️ Kontribusi</div>
+            <h1 class="text-4xl lg:text-5xl font-black text-abk-dark mb-4 leading-tight">Bagikan Referensi</h1>
+            <p class="text-slate-500 text-lg leading-relaxed">Bantu parent lain menemukan referensi sekolah, tempat terapi, tempat ramah ABK, atau dukungan terkait. Bersama kita lebih kuat! 💛</p>
         </div>
+    </section>
 
-        <div class="max-w-5xl mx-auto">
-            {% if is_guest %}
-            <div class="bg-white rounded-abk p-12 lg:p-20 text-center shadow-xl border border-gray-100">
-                <div class="bg-indigo-50 w-24 h-24 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-8 shadow-inner shadow-indigo-100">🔑</div>
-                <h2 class="text-3xl font-black text-abk-dark mb-4">Masuk untuk Berbagi</h2>
-                <p class="text-gray-500 mb-12 max-w-sm mx-auto leading-relaxed">Silakan login atau daftar akun agar info yang Anda bagikan bisa diverifikasi dengan jelas.</p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="/login?redirect-to=/abk/submit-info" class="btn-abk-primary no-underline inline-block px-12 py-5 text-lg">Login</a>
-                    <a href="/abk/register" class="btn-abk-outline no-underline inline-block px-12 py-5 text-lg">Daftar Member</a>
-                </div>
-            </div>
-            {% elif member_status == "missing" %}
-            <div class="bg-white rounded-abk p-12 lg:p-20 text-center shadow-xl border border-gray-100">
-                <div class="bg-yellow-50 w-24 h-24 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-8 shadow-inner shadow-yellow-100">!</div>
-                <h2 class="text-3xl font-black text-abk-dark mb-4">Lengkapi Registrasi Member</h2>
-                <p class="text-gray-500 mb-12 max-w-md mx-auto leading-relaxed">Akun Anda belum memiliki profil member ABK. Daftar sebagai member terlebih dahulu agar admin bisa melakukan verifikasi.</p>
-                <a href="/abk/register" class="btn-abk-primary no-underline inline-block px-12 py-5 text-lg">Daftar Member</a>
-            </div>
-            {% elif member_status == "pending" %}
-            <div class="bg-white rounded-abk p-12 lg:p-20 text-center shadow-xl border border-gray-100">
-                <div class="bg-blue-50 w-24 h-24 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-8 shadow-inner shadow-blue-100">⌛</div>
-                <h2 class="text-3xl font-black text-abk-dark mb-4">Menunggu Verifikasi</h2>
-                <p class="text-gray-500 mb-12 max-w-md mx-auto leading-relaxed">Akun Anda sedang menunggu verifikasi admin.</p>
-                <a href="/abk" class="btn-abk-outline no-underline inline-block px-12 py-5 text-lg">Kembali ke Portal</a>
-            </div>
-            {% elif member_status == "rejected" %}
-            <div class="bg-white rounded-abk p-12 lg:p-20 text-center shadow-xl border border-gray-100">
-                <div class="bg-red-50 w-24 h-24 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-8 shadow-inner shadow-red-100">×</div>
-                <h2 class="text-3xl font-black text-abk-dark mb-4">Belum Dapat Mengirim Info</h2>
-                <p class="text-gray-500 mb-12 max-w-md mx-auto leading-relaxed">Akun Anda belum dapat mengirim info. Hubungi admin.</p>
-                <a href="/abk" class="btn-abk-outline no-underline inline-block px-12 py-5 text-lg">Kembali ke Portal</a>
-            </div>
-            {% else %}
-            <div class="bg-white rounded-abk shadow-2xl border border-gray-50 overflow-hidden">
-                <div class="bg-abk-primary p-8 flex items-center gap-4">
-                    <div class="bg-white/20 p-3 rounded-xl text-white text-2xl"><i class="fa fa-edit"></i></div>
-                    <h2 class="text-2xl font-black text-white">Formulir Informasi ABK Portal</h2>
+    <!-- Form Area -->
+    <section class="py-10">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+
+                {% if is_guest %}
+                <!-- === STATE: Guest === -->
+                <div class="bg-white rounded-abk p-14 text-center shadow-sm border border-orange-100">
+                    <div class="w-20 h-20 bg-orange-50 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-6">🔑</div>
+                    <h2 class="text-2xl font-black text-abk-dark mb-3">Masuk untuk Berbagi</h2>
+                    <p class="text-slate-500 mb-8 max-w-sm mx-auto leading-relaxed text-sm">Silakan login atau daftar akun agar info yang Anda bagikan bisa diverifikasi dengan jelas.</p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="/login?redirect-to=/abk/submit-info" class="btn-abk-primary no-underline text-base px-10 py-4">Login</a>
+                        <a href="/abk/register" class="btn-abk-outline no-underline text-base px-10 py-4">Daftar Member</a>
+                    </div>
                 </div>
 
-                <div class="p-8 lg:p-12">
-                    <div id="submit-success" class="hidden text-center py-10">
-                        <div class="w-24 h-24 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-5xl mx-auto mb-8 shadow-inner shadow-green-200">✓</div>
-                        <h2 class="text-3xl font-black text-abk-dark mb-4">Terima kasih</h2>
-                        <p class="text-gray-500 text-lg mb-10">Terima kasih, info Anda sudah masuk dan akan dicek admin.</p>
-                        <a href="/abk" class="btn-abk-outline no-underline inline-block">Kembali ke Portal</a>
+                {% elif member_status == "missing" %}
+                <!-- === STATE: No member profile === -->
+                <div class="bg-white rounded-abk p-14 text-center shadow-sm border border-amber-100">
+                    <div class="w-20 h-20 bg-amber-50 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-6">📋</div>
+                    <h2 class="text-2xl font-black text-abk-dark mb-3">Lengkapi Registrasi Member</h2>
+                    <p class="text-slate-500 mb-8 max-w-sm mx-auto leading-relaxed text-sm">Akun Anda belum memiliki profil member ABK. Daftar sebagai member terlebih dahulu agar admin bisa melakukan verifikasi.</p>
+                    <a href="/abk/register" class="btn-abk-primary no-underline text-base px-10 py-4">Daftar Member</a>
+                </div>
+
+                {% elif member_status == "pending" %}
+                <!-- === STATE: Pending verification === -->
+                <div class="bg-white rounded-abk p-14 text-center shadow-sm border border-blue-100">
+                    <div class="w-20 h-20 bg-blue-50 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-6">⌛</div>
+                    <h2 class="text-2xl font-black text-abk-dark mb-3">Menunggu Verifikasi</h2>
+                    <p class="text-slate-500 mb-8 max-w-sm mx-auto leading-relaxed text-sm">Akun Anda sedang menunggu verifikasi admin. Kami akan segera menghubungi Anda.</p>
+                    <a href="/abk" class="btn-abk-outline no-underline text-base px-10 py-4">Kembali ke Portal</a>
+                </div>
+
+                {% elif member_status == "rejected" %}
+                <!-- === STATE: Rejected === -->
+                <div class="bg-white rounded-abk p-14 text-center shadow-sm border border-red-100">
+                    <div class="w-20 h-20 bg-red-50 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-6">❌</div>
+                    <h2 class="text-2xl font-black text-abk-dark mb-3">Belum Dapat Mengirim Info</h2>
+                    <p class="text-slate-500 mb-8 max-w-sm mx-auto leading-relaxed text-sm">Akun Anda belum dapat mengirim info. Silakan hubungi admin untuk informasi lebih lanjut.</p>
+                    <a href="/abk" class="btn-abk-outline no-underline text-base px-10 py-4">Kembali ke Portal</a>
+                </div>
+
+                {% else %}
+                <!-- === STATE: Form Active === -->
+
+                <!-- Success state -->
+                <div id="submit-success" class="hidden bg-white rounded-abk p-16 text-center shadow-sm border border-green-100">
+                    <div class="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center text-4xl mx-auto mb-6">✅</div>
+                    <h2 class="text-2xl font-black text-abk-dark mb-3">Terima kasih!</h2>
+                    <p class="text-slate-500 text-base mb-8">Info Anda sudah masuk dan akan segera dicek oleh tim admin kami.</p>
+                    <a href="/abk" class="btn-abk-outline no-underline">Kembali ke Portal</a>
+                </div>
+
+                <!-- The Form -->
+                <div id="submit-form-wrapper">
+                    <!-- Form Header -->
+                    <div class="rounded-t-abk overflow-hidden mb-0" style="background: linear-gradient(135deg, #F97316, #EC4899);">
+                        <div class="p-6 flex items-center gap-3">
+                            <div class="bg-white/20 p-2.5 rounded-xl text-white text-xl">✏️</div>
+                            <h2 class="text-xl font-black text-white">Formulir Informasi ABK Portal</h2>
+                        </div>
                     </div>
 
-                    <form id="abk-submit-form" class="space-y-12">
-                        <section>
-                            <h3 class="text-xl font-black text-abk-dark mb-6">A. Data pemberi info</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <input class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" name="submitter_name" placeholder="Nama pemberi info">
-                                <input class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" name="submitter_phone" placeholder="No. telepon / WhatsApp">
-                                <input class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" name="submitter_email" type="email" placeholder="Email">
-                                <select class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" name="submitter_relationship">
-                                    <option value="">Hubungan dengan tempat</option>
-                                    {% for relationship in relationships %}
-                                    <option value="{{ relationship }}">{{ relationship }}</option>
-                                    {% endfor %}
-                                </select>
-                                <textarea class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium md:col-span-2" name="confirmation_notes" rows="3" placeholder="Catatan konfirmasi"></textarea>
-                            </div>
-                        </section>
+                    <form id="abk-submit-form" class="bg-white rounded-b-abk shadow-sm border border-orange-100 border-t-0 overflow-hidden">
+                        <div class="p-7 lg:p-10 space-y-10">
 
-                        <section>
-                            <h3 class="text-xl font-black text-abk-dark mb-6">B. Informasi tempat</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <input class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium md:col-span-2" name="place_name" required placeholder="Nama tempat / referensi">
-                                <select class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" name="suggested_category" required>
-                                    <option value="">Kategori</option>
-                                    {% for pt in place_types %}
-                                    <option value="{{ pt }}">{{ pt }}</option>
-                                    {% endfor %}
-                                </select>
-                                <textarea class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium md:col-span-2" name="description" rows="4" placeholder="Deskripsi"></textarea>
-                            </div>
-                        </section>
-
-                        <section>
-                            <h3 class="text-xl font-black text-abk-dark mb-6">C. Lokasi</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <input class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" name="city" required placeholder="Kota">
-                                <input class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" name="district" placeholder="Kecamatan">
-                                <input class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" name="area" placeholder="Area / kelurahan">
-                                <input class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" name="google_map_url" placeholder="Google Map URL">
-                                <textarea class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium md:col-span-2" name="address" rows="3" placeholder="Alamat"></textarea>
-                            </div>
-                        </section>
-
-                        <section>
-                            <h3 class="text-xl font-black text-abk-dark mb-6">D. Kontak dan referensi</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <input class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" name="contact_phone" placeholder="Telepon tempat">
-                                <input class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" name="contact_whatsapp" placeholder="WhatsApp tempat">
-                                <input class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" name="contact_email" type="email" placeholder="Email tempat">
-                                <input class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" name="website_url" placeholder="Website URL">
-                                <input class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" name="instagram_url" placeholder="Instagram URL">
-                                <input class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" name="reference_url" placeholder="Reference URL">
-                                <textarea class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium md:col-span-2" name="reference_notes" rows="3" placeholder="Catatan referensi"></textarea>
-                            </div>
-                        </section>
-
-                        <section>
-                            <h3 class="text-xl font-black text-abk-dark mb-6">E. Plus/minus dan catatan</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <textarea class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" name="plus_points" rows="5" placeholder="Plus points"></textarea>
-                                <textarea class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" name="minus_points" rows="5" placeholder="Minus points"></textarea>
-                            </div>
-                        </section>
-
-                        <section>
-                            <h3 class="text-xl font-black text-abk-dark mb-6">F. Upload foto/video atau URL media</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3 pl-2">File foto/video</label>
-                                    <input class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" id="media-files" type="file" multiple accept="image/*,video/*">
+                            <!-- Section A: Pemberi Info -->
+                            <div>
+                                <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
+                                    <span class="w-8 h-8 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center text-sm font-black flex-shrink-0">A</span>
+                                    <h3 class="text-lg font-black text-abk-dark">Data Pemberi Info</h3>
                                 </div>
-                                <div>
-                                    <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3 pl-2">Caption file</label>
-                                    <input class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" id="media-file-caption" placeholder="Caption untuk file yang diupload">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3 pl-2">URL media</label>
-                                    <input class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" id="media-url" placeholder="https://...">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3 pl-2">Caption URL</label>
-                                    <input class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" id="media-url-caption" placeholder="Caption URL media">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <input class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm" name="submitter_name" placeholder="Nama pemberi info">
+                                    <input class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm" name="submitter_phone" placeholder="No. telepon / WhatsApp">
+                                    <input class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm" name="submitter_email" type="email" placeholder="Email">
+                                    <select class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm" name="submitter_relationship">
+                                        <option value="">Hubungan dengan tempat</option>
+                                        {% for relationship in relationships %}
+                                        <option value="{{ relationship }}">{{ relationship }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <textarea class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm md:col-span-2" name="confirmation_notes" rows="3" placeholder="Catatan konfirmasi (opsional)"></textarea>
                                 </div>
                             </div>
-                        </section>
 
-                        <div class="bg-indigo-50 p-6 rounded-2xl flex gap-4 items-start border border-indigo-100">
-                            <i class="fa fa-info-circle text-indigo-500 mt-1"></i>
-                            <p class="text-xs text-indigo-900/60 font-bold leading-relaxed italic">Info yang dikirim masuk sebagai status New dan tidak akan dipublikasikan sebelum disetujui admin.</p>
+                            <!-- Section B: Informasi Tempat -->
+                            <div>
+                                <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
+                                    <span class="w-8 h-8 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center text-sm font-black flex-shrink-0">B</span>
+                                    <h3 class="text-lg font-black text-abk-dark">Informasi Tempat</h3>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <input class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm md:col-span-2" name="place_name" required placeholder="Nama tempat / referensi">
+                                    <select class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm" name="suggested_category" required>
+                                        <option value="">Kategori</option>
+                                        {% for pt in place_types %}
+                                        <option value="{{ pt }}">{{ pt }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <textarea class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm md:col-span-2" name="description" rows="4" placeholder="Deskripsi singkat tempat ini..."></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Section C: Lokasi -->
+                            <div>
+                                <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
+                                    <span class="w-8 h-8 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center text-sm font-black flex-shrink-0">C</span>
+                                    <h3 class="text-lg font-black text-abk-dark">Lokasi</h3>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <input class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm" name="city" required placeholder="Kota">
+                                    <input class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm" name="district" placeholder="Kecamatan">
+                                    <input class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm" name="area" placeholder="Area / Kelurahan">
+                                    <input class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm" name="google_map_url" placeholder="Google Map URL">
+                                    <textarea class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm md:col-span-2" name="address" rows="3" placeholder="Alamat lengkap"></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Section D: Kontak -->
+                            <div>
+                                <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
+                                    <span class="w-8 h-8 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center text-sm font-black flex-shrink-0">D</span>
+                                    <h3 class="text-lg font-black text-abk-dark">Kontak dan Referensi</h3>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <input class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm" name="contact_phone" placeholder="📞 Telepon tempat">
+                                    <input class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm" name="contact_whatsapp" placeholder="💬 WhatsApp tempat">
+                                    <input class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm" name="contact_email" type="email" placeholder="📧 Email tempat">
+                                    <input class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm" name="website_url" placeholder="🌐 Website URL">
+                                    <input class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm" name="instagram_url" placeholder="📷 Instagram URL">
+                                    <input class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm" name="reference_url" placeholder="🔗 Reference URL">
+                                    <textarea class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm md:col-span-2" name="reference_notes" rows="3" placeholder="Catatan referensi tambahan"></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Section E: Plus/Minus -->
+                            <div>
+                                <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
+                                    <span class="w-8 h-8 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center text-sm font-black flex-shrink-0">E</span>
+                                    <h3 class="text-lg font-black text-abk-dark">Kelebihan &amp; Catatan</h3>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-black text-green-600 uppercase tracking-wider mb-2">✅ Plus / Kelebihan</label>
+                                        <textarea class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-green-200 text-slate-700 font-semibold text-sm" name="plus_points" rows="5" placeholder="Ceritakan kelebihan tempat ini..."></textarea>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-black text-amber-600 uppercase tracking-wider mb-2">⚠️ Perlu Diperhatikan</label>
+                                        <textarea class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-amber-200 text-slate-700 font-semibold text-sm" name="minus_points" rows="5" placeholder="Hal yang perlu diperhatikan..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Section F: Media -->
+                            <div>
+                                <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
+                                    <span class="w-8 h-8 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center text-sm font-black flex-shrink-0">F</span>
+                                    <h3 class="text-lg font-black text-abk-dark">Upload Foto / Video</h3>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-black text-slate-400 uppercase tracking-wider mb-2">📁 File Foto/Video</label>
+                                        <input class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm" id="media-files" type="file" multiple accept="image/*,video/*">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-black text-slate-400 uppercase tracking-wider mb-2">📝 Caption File</label>
+                                        <input class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm" id="media-file-caption" placeholder="Caption untuk file yang diupload">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-black text-slate-400 uppercase tracking-wider mb-2">🔗 URL Media</label>
+                                        <input class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm" id="media-url" placeholder="https://...">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-black text-slate-400 uppercase tracking-wider mb-2">📝 Caption URL</label>
+                                        <input class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm" id="media-url-caption" placeholder="Caption URL media">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Info note -->
+                            <div class="bg-blue-50 rounded-2xl p-4 flex gap-3 items-start border border-blue-100">
+                                <span class="text-blue-500 text-lg flex-shrink-0">ℹ️</span>
+                                <p class="text-xs text-blue-700 font-semibold leading-relaxed">Info yang dikirim masuk sebagai status <strong>New</strong> dan tidak akan dipublikasikan sebelum disetujui admin.</p>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button type="submit" class="btn-abk-primary w-full text-center text-lg py-5 shadow-lg">
+                                Kirim untuk Verifikasi 🚀
+                            </button>
                         </div>
-
-                        <button type="submit" class="w-full btn-abk-primary text-xl py-5 shadow-2xl shadow-abk-primary/40">Kirim untuk Verifikasi</button>
                     </form>
                 </div>
+                {% endif %}
+
             </div>
-            {% endif %}
         </div>
-    </div>
+    </section>
 </main>
 {% endblock %}
 
 {% block script %}
 <script>
 frappe.ready(function() {
-	const form = document.getElementById("abk-submit-form");
-	if (!form) return;
+    const form = document.getElementById("abk-submit-form");
+    if (!form) return;
 
-	form.addEventListener("submit", async function(event) {
-		event.preventDefault();
-		const btn = form.querySelector('button[type="submit"]');
-		const originalText = btn.textContent;
-		btn.disabled = true;
-		btn.textContent = "Mengirim Data...";
+    form.addEventListener("submit", async function(event) {
+        event.preventDefault();
+        const btn = form.querySelector('button[type="submit"]');
+        const originalText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<svg class="animate-spin h-5 w-5 mr-2 text-white inline" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Mengirim Data...';
 
-		const args = Object.fromEntries(new FormData(form));
-		const mediaUrl = document.getElementById("media-url").value.trim();
-		const mediaUrlCaption = document.getElementById("media-url-caption").value.trim();
-		args.media = JSON.stringify(mediaUrl ? [{
-			media_type: "URL",
-			media_url: mediaUrl,
-			caption: mediaUrlCaption,
-			sort_order: 1
-		}] : []);
+        const args = Object.fromEntries(new FormData(form));
+        const mediaUrl = document.getElementById("media-url").value.trim();
+        const mediaUrlCaption = document.getElementById("media-url-caption").value.trim();
+        args.media = JSON.stringify(mediaUrl ? [{ media_type: "URL", media_url: mediaUrl, caption: mediaUrlCaption, sort_order: 1 }] : []);
 
-		frappe.call({
-			method: "custom_special.abk_portal.public.submit_user_submitted_info",
-			args,
-			callback: async function(r) {
-				const docname = r.message && r.message.name;
-				try {
-					if (docname) {
-						await uploadSelectedFiles(docname);
-					}
-					form.classList.add("hidden");
-					document.getElementById("submit-success").classList.remove("hidden");
-					window.scrollTo(0, 0);
-				} catch (error) {
-					frappe.msgprint("Info tersimpan, tetapi sebagian media belum berhasil diupload.");
-					form.classList.add("hidden");
-					document.getElementById("submit-success").classList.remove("hidden");
-				}
-			},
-			error: function() {
-				btn.disabled = false;
-				btn.textContent = originalText;
-				frappe.msgprint("Terjadi kesalahan. Silakan coba lagi.");
-			}
-		});
-	});
+        frappe.call({
+            method: "custom_special.abk_portal.public.submit_user_submitted_info",
+            args,
+            callback: async function(r) {
+                const docname = r.message && r.message.name;
+                try {
+                    if (docname) await uploadSelectedFiles(docname);
+                    document.getElementById("submit-form-wrapper").classList.add("hidden");
+                    document.getElementById("submit-success").classList.remove("hidden");
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } catch (error) {
+                    frappe.msgprint("Info tersimpan, tetapi sebagian media belum berhasil diupload.");
+                    document.getElementById("submit-form-wrapper").classList.add("hidden");
+                    document.getElementById("submit-success").classList.remove("hidden");
+                }
+            },
+            error: function() {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+                frappe.msgprint("Terjadi kesalahan. Silakan coba lagi.");
+            }
+        });
+    });
 
-	async function uploadSelectedFiles(docname) {
-		const input = document.getElementById("media-files");
-		const caption = document.getElementById("media-file-caption").value.trim();
-		const files = Array.from(input.files || []);
-		for (let i = 0; i < files.length; i++) {
-			const file = files[i];
-			const formData = new FormData();
-			formData.append("file", file);
-			formData.append("is_private", "0");
-			const response = await fetch("/api/method/upload_file", {
-				method: "POST",
-				headers: { "X-Frappe-CSRF-Token": frappe.csrf_token },
-				body: formData
-			});
-			const result = await response.json();
-			const fileUrl = result.message && result.message.file_url;
-			if (fileUrl) {
-				await frappe.call({
-					method: "custom_special.abk_portal.public.append_submission_media",
-					args: {
-						name: docname,
-						media_type: file.type && file.type.indexOf("video/") === 0 ? "Video" : "Image",
-						media_file: fileUrl,
-						caption,
-						sort_order: i + 2
-					}
-				});
-			}
-		}
-	}
+    async function uploadSelectedFiles(docname) {
+        const input = document.getElementById("media-files");
+        const caption = document.getElementById("media-file-caption").value.trim();
+        const files = Array.from(input.files || []);
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("is_private", "0");
+            const response = await fetch("/api/method/upload_file", {
+                method: "POST",
+                headers: { "X-Frappe-CSRF-Token": frappe.csrf_token },
+                body: formData
+            });
+            const result = await response.json();
+            const fileUrl = result.message && result.message.file_url;
+            if (fileUrl) {
+                await frappe.call({
+                    method: "custom_special.abk_portal.public.append_submission_media",
+                    args: { name: docname, media_type: file.type && file.type.indexOf("video/") === 0 ? "Video" : "Image", media_file: fileUrl, caption, sort_order: i + 2 }
+                });
+            }
+        }
+    }
 });
 </script>
 {% endblock %}
