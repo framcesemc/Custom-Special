@@ -21,6 +21,7 @@
   "google_map_url",
   "details_section",
   "short_description",
+  "full_description",
   "plus_points",
   "minus_points",
   "special_needs_tags",
@@ -123,6 +124,11 @@
    "fieldname": "short_description",
    "fieldtype": "Small Text",
    "label": "Short Description"
+  },
+  {
+   "fieldname": "full_description",
+   "fieldtype": "Text Editor",
+   "label": "Deskripsi Lengkap"
   },
   {
    "fieldname": "plus_points",

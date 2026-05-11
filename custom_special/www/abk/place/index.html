@@ -53,6 +53,54 @@
                     </div>
                 </div>
 
+                <!-- Full Description -->
+                {% if place_description %}
+                <section class="bg-white rounded-abk p-6 lg:p-7 shadow-sm border border-orange-50">
+                    <h2 class="text-2xl font-black text-abk-dark mb-4">Tentang Tempat Ini</h2>
+                    <div class="text-slate-600 text-base leading-relaxed whitespace-pre-line">
+                        {{ place_description | safe if place.full_description else place_description }}
+                    </div>
+                </section>
+                {% endif %}
+
+                <!-- Tags -->
+                {% if place.special_needs_tags %}
+                <div class="bg-white rounded-abk p-6 shadow-sm border border-orange-50">
+                    <h3 class="text-sm font-black text-slate-400 uppercase tracking-widest mb-4">🏷️ Kebutuhan yang Dilayani</h3>
+                    <div class="flex flex-wrap gap-2">
+                        {% for tag in (place.special_needs_tags or "").split(',') %}
+                        {% if tag %}
+                        <span class="abk-badge bg-orange-50 text-orange-700 text-xs">{{ tag.strip() }}</span>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Plus / Minus -->
+                {% if place.plus_points or place.minus_points %}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    {% if place.plus_points %}
+                    <div class="bg-green-50 p-6 rounded-abk border-t-4 border-green-400">
+                        <h3 class="font-black text-green-800 mb-3 flex items-center gap-2 text-base">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                            Kelebihan
+                        </h3>
+                        <div class="text-green-900/75 text-sm leading-relaxed whitespace-pre-line">{{ place.plus_points }}</div>
+                    </div>
+                    {% endif %}
+                    {% if place.minus_points %}
+                    <div class="bg-amber-50 p-6 rounded-abk border-t-4 border-amber-400">
+                        <h3 class="font-black text-amber-800 mb-3 flex items-center gap-2 text-base">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                            Perlu Diperhatikan
+                        </h3>
+                        <div class="text-amber-900/75 text-sm leading-relaxed whitespace-pre-line">{{ place.minus_points }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
                 <!-- Gallery -->
                 {% if gallery %}
                 <section class="bg-white rounded-abk p-6 lg:p-7 shadow-sm border border-orange-50">
@@ -106,44 +154,6 @@
                 </section>
                 {% endif %}
 
-                <!-- Tags -->
-                {% if place.special_needs_tags %}
-                <div class="bg-white rounded-abk p-6 shadow-sm border border-orange-50">
-                    <h3 class="text-sm font-black text-slate-400 uppercase tracking-widest mb-4">🏷️ Kebutuhan yang Dilayani</h3>
-                    <div class="flex flex-wrap gap-2">
-                        {% for tag in (place.special_needs_tags or "").split(',') %}
-                        {% if tag %}
-                        <span class="abk-badge bg-orange-50 text-orange-700 text-xs">{{ tag.strip() }}</span>
-                        {% endif %}
-                        {% endfor %}
-                    </div>
-                </div>
-                {% endif %}
-
-                <!-- Plus / Minus -->
-                {% if place.plus_points or place.minus_points %}
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    {% if place.plus_points %}
-                    <div class="bg-green-50 p-6 rounded-abk border-t-4 border-green-400">
-                        <h3 class="font-black text-green-800 mb-3 flex items-center gap-2 text-base">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
-                            Kelebihan
-                        </h3>
-                        <div class="text-green-900/75 text-sm leading-relaxed whitespace-pre-line">{{ place.plus_points }}</div>
-                    </div>
-                    {% endif %}
-                    {% if place.minus_points %}
-                    <div class="bg-amber-50 p-6 rounded-abk border-t-4 border-amber-400">
-                        <h3 class="font-black text-amber-800 mb-3 flex items-center gap-2 text-base">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                            Perlu Diperhatikan
-                        </h3>
-                        <div class="text-amber-900/75 text-sm leading-relaxed whitespace-pre-line">{{ place.minus_points }}</div>
-                    </div>
-                    {% endif %}
-                </div>
-                {% endif %}
-
                 <!-- Address -->
                 {% if place.address %}
                 <div class="bg-white rounded-abk p-6 shadow-sm border border-orange-50">
@@ -159,6 +169,188 @@
                     {% endif %}
                 </div>
                 {% endif %}
+
+                <!-- Parent Experiences -->
+                <section id="parent-experience" class="bg-white rounded-abk p-6 lg:p-7 shadow-sm border border-orange-50">
+                    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+                        <div>
+                            <div class="text-xs font-black text-orange-500 uppercase tracking-widest mb-2">Pengalaman Parent</div>
+                            <h2 class="text-2xl font-black text-abk-dark mb-2">{{ experience_summary.count }} parent telah membagikan pengalaman</h2>
+                            <p class="text-slate-500 text-sm">Cerita yang tampil di sini sudah dicek admin agar tetap aman dan relevan.</p>
+                        </div>
+                        <a href="#share-experience" class="btn-abk-outline text-sm py-2.5 px-5 no-underline text-center">Bagikan Pengalaman</a>
+                    </div>
+
+                    {% if experience_summary.top_badges %}
+                    <div class="flex flex-wrap gap-2 mb-7">
+                        {% for badge in experience_summary.top_badges %}
+                        <span class="bg-orange-50 text-orange-700 text-xs font-black px-3 py-1.5 rounded-full">
+                            {{ badge.badge_name }} ({{ badge.count }})
+                        </span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <div class="space-y-5">
+                        {% for experience in experiences %}
+                        <article class="bg-slate-50 rounded-3xl p-5 border border-slate-100">
+                            <div class="flex flex-col md:flex-row md:items-start justify-between gap-3 mb-4">
+                                <div>
+                                    <h3 class="text-lg font-black text-abk-dark mb-1">{{ experience.experience_title or "Pengalaman parent" }}</h3>
+                                    <div class="text-xs font-bold text-slate-400">
+                                        {{ experience.reviewer_name }}
+                                        {% if experience.reviewer_relationship %} · {{ experience.reviewer_relationship }}{% endif %}
+                                        {% if experience.visit_date %} · {{ frappe.format_date(experience.visit_date) }}{% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% if experience.badges %}
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                {% for badge in experience.badges %}
+                                <span class="bg-white text-orange-600 text-[11px] font-black px-3 py-1 rounded-full border border-orange-100">
+                                    {{ badge.icon or "" }} {{ badge.badge_name }}
+                                </span>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+
+                            <div class="text-slate-600 text-sm leading-relaxed whitespace-pre-line">{{ experience.experience_text }}</div>
+
+                            {% if experience.helpful_points or experience.things_to_note %}
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+                                {% if experience.helpful_points %}
+                                <div class="bg-green-50 rounded-2xl p-4">
+                                    <div class="text-xs font-black text-green-700 uppercase tracking-widest mb-2">Yang Membantu</div>
+                                    <div class="text-green-900/75 text-sm leading-relaxed whitespace-pre-line">{{ experience.helpful_points }}</div>
+                                </div>
+                                {% endif %}
+                                {% if experience.things_to_note %}
+                                <div class="bg-amber-50 rounded-2xl p-4">
+                                    <div class="text-xs font-black text-amber-700 uppercase tracking-widest mb-2">Hal yang Perlu Diperhatikan</div>
+                                    <div class="text-amber-900/75 text-sm leading-relaxed whitespace-pre-line">{{ experience.things_to_note }}</div>
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        </article>
+                        {% else %}
+                        <div class="bg-slate-50 rounded-3xl p-6 text-center border border-dashed border-slate-200">
+                            <h3 class="text-lg font-black text-abk-dark mb-2">Belum ada pengalaman yang dipublikasikan</h3>
+                            <p class="text-slate-500 text-sm">Jadilah parent pertama yang berbagi setelah pengalaman Anda diverifikasi admin.</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </section>
+
+                <!-- Submit Experience -->
+                <section id="share-experience" class="bg-white rounded-abk p-6 lg:p-7 shadow-sm border border-orange-50">
+                    <div class="mb-6">
+                        <div class="text-xs font-black text-orange-500 uppercase tracking-widest mb-2">Berbagi dengan Aman</div>
+                        <h2 class="text-2xl font-black text-abk-dark mb-2">Bagikan Pengalaman</h2>
+                        <p class="text-slate-500 text-sm">Pengalaman Anda membantu parent lain memahami konteks tempat ini. Semua kiriman akan dicek admin sebelum tampil.</p>
+                    </div>
+
+                    {% if is_guest %}
+                    <div class="bg-orange-50 rounded-3xl p-6 border border-orange-100">
+                        <h3 class="text-lg font-black text-abk-dark mb-2">Login untuk membagikan pengalaman</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-5">Login untuk membagikan pengalaman agar informasi tetap aman dan terpercaya.</p>
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <a href="/login?redirect-to=/abk/place/{{ place.slug }}#share-experience" class="btn-abk-primary text-center no-underline">Login</a>
+                            <a href="/abk/register" class="btn-abk-outline text-center no-underline">Daftar Member</a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div id="abk-experience-success" class="hidden bg-green-50 text-green-700 border border-green-200 p-4 rounded-2xl mb-5 text-sm font-bold"></div>
+                    <div id="abk-experience-error" class="hidden bg-red-50 text-red-600 border border-red-200 p-4 rounded-2xl mb-5 text-sm font-bold"></div>
+
+                    <form id="abk-experience-form" class="space-y-6">
+                        <input type="hidden" name="place_slug" value="{{ place.slug }}">
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Nama</label>
+                                <input type="text" name="reviewer_name"
+                                       class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm"
+                                       placeholder="Nama Anda">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Hubungan</label>
+                                <select name="reviewer_relationship"
+                                        class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm">
+                                    <option value="">Pilih hubungan</option>
+                                    <option value="Parent">Parent</option>
+                                    <option value="Guardian">Guardian</option>
+                                    <option value="Teacher">Teacher</option>
+                                    <option value="Therapist">Therapist</option>
+                                    <option value="School Staff">School Staff</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <label class="flex items-center gap-3 bg-slate-50 rounded-2xl p-4 text-sm font-bold text-slate-600">
+                            <input type="checkbox" name="is_anonymous" value="1" class="rounded border-slate-300 text-orange-500 focus:ring-orange-200">
+                            Tampilkan sebagai Anonim
+                        </label>
+
+                        <div>
+                            <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Judul Pengalaman</label>
+                            <input type="text" name="experience_title"
+                                   class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm"
+                                   placeholder="Contoh: Anak saya nyaman saat sesi pertama">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Cerita Pengalaman</label>
+                            <textarea name="experience_text" rows="5" required
+                                      class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm"
+                                      placeholder="Ceritakan konteks pengalaman Anda secara singkat dan jujur."></textarea>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Yang Membantu</label>
+                                <textarea name="helpful_points" rows="3"
+                                          class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm"
+                                          placeholder="Apa yang paling membantu?"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Hal yang Perlu Diperhatikan</label>
+                                <textarea name="things_to_note" rows="3"
+                                          class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm"
+                                          placeholder="Apa yang perlu diketahui parent lain?"></textarea>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Tanggal Kunjungan</label>
+                            <input type="date" name="visit_date"
+                                   class="w-full md:w-64 bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm">
+                        </div>
+
+                        {% if experience_badges %}
+                        <div>
+                            <div class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Badge Pengalaman</div>
+                            <div class="flex flex-wrap gap-2">
+                                {% for badge in experience_badges %}
+                                <label class="cursor-pointer">
+                                    <input type="checkbox" name="badges" value="{{ badge.name }}" class="peer sr-only">
+                                    <span class="inline-flex items-center bg-slate-50 text-slate-600 text-xs font-black px-3 py-2 rounded-full border border-slate-100 peer-checked:bg-orange-500 peer-checked:text-white peer-checked:border-orange-500 transition-colors">
+                                        {{ badge.icon or "" }} {{ badge.badge_name }}
+                                    </span>
+                                </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <button type="submit" class="btn-abk-primary w-full md:w-auto px-7 py-4 text-base">
+                            Kirim Pengalaman untuk Diverifikasi
+                        </button>
+                    </form>
+                    {% endif %}
+                </section>
             </div>
 
             <!-- ====== RIGHT: Inquiry Form ====== -->
@@ -229,8 +421,7 @@
 <script>
 frappe.ready(function() {
     const form = document.getElementById("abk-inquiry-form");
-    if (!form) return;
-
+    if (form) {
     form.addEventListener("submit", function(event) {
         event.preventDefault();
         const success = document.getElementById("abk-inquiry-success");
@@ -262,6 +453,44 @@ frappe.ready(function() {
             }
         });
     });
+    }
+
+    const experienceForm = document.getElementById("abk-experience-form");
+    if (experienceForm) {
+        experienceForm.addEventListener("submit", function(event) {
+            event.preventDefault();
+            const success = document.getElementById("abk-experience-success");
+            const error = document.getElementById("abk-experience-error");
+            const btn = experienceForm.querySelector('button[type="submit"]');
+            const formData = new FormData(experienceForm);
+            const badges = formData.getAll("badges");
+            const args = Object.fromEntries(formData);
+            args.badges = JSON.stringify(badges);
+
+            success.classList.add("hidden");
+            error.classList.add("hidden");
+            btn.disabled = true;
+            btn.textContent = "Mengirim...";
+
+            frappe.call({
+                method: "custom_special.abk_portal.api.submit_place_experience",
+                args: args,
+                callback: function(response) {
+                    experienceForm.reset();
+                    success.textContent = (response.message && response.message.message) || response.message || "Terima kasih, pengalaman Anda sudah dikirim dan akan dicek admin.";
+                    success.classList.remove("hidden");
+                    btn.disabled = false;
+                    btn.textContent = "Kirim Pengalaman untuk Diverifikasi";
+                },
+                error: function(response) {
+                    error.textContent = response.message || "Gagal mengirim pengalaman. Silakan coba lagi.";
+                    error.classList.remove("hidden");
+                    btn.disabled = false;
+                    btn.textContent = "Kirim Pengalaman untuk Diverifikasi";
+                }
+            });
+        });
+    }
 });
 </script>
 {% endblock %}

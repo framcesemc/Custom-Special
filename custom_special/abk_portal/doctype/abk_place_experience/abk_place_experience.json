@@ -1,0 +1,184 @@
+{
+ "actions": [],
+ "autoname": "format:ABK-EXP-.#####",
+ "creation": "2026-05-11 00:00:00.000000",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "engine": "InnoDB",
+ "field_order": [
+  "abk_place",
+  "reviewer_user",
+  "reviewer_name",
+  "reviewer_relationship",
+  "is_anonymous",
+  "experience_section",
+  "experience_title",
+  "experience_text",
+  "helpful_points",
+  "things_to_note",
+  "visit_date",
+  "badges",
+  "moderation_section",
+  "verification_status",
+  "published",
+  "admin_notes",
+  "reviewed_by",
+  "reviewed_on"
+ ],
+ "fields": [
+  {
+   "fieldname": "abk_place",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "ABK Place",
+   "options": "ABK Place",
+   "reqd": 1
+  },
+  {
+   "fieldname": "reviewer_user",
+   "fieldtype": "Link",
+   "label": "Reviewer User",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "reviewer_name",
+   "fieldtype": "Data",
+   "label": "Reviewer Name"
+  },
+  {
+   "fieldname": "reviewer_relationship",
+   "fieldtype": "Select",
+   "label": "Reviewer Relationship",
+   "options": "Parent\nGuardian\nTeacher\nTherapist\nSchool Staff\nOther"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_anonymous",
+   "fieldtype": "Check",
+   "label": "Is Anonymous"
+  },
+  {
+   "fieldname": "experience_section",
+   "fieldtype": "Section Break",
+   "label": "Experience"
+  },
+  {
+   "fieldname": "experience_title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Experience Title"
+  },
+  {
+   "fieldname": "experience_text",
+   "fieldtype": "Text Editor",
+   "label": "Experience Text",
+   "reqd": 1
+  },
+  {
+   "fieldname": "helpful_points",
+   "fieldtype": "Text Editor",
+   "label": "Helpful Points"
+  },
+  {
+   "fieldname": "things_to_note",
+   "fieldtype": "Text Editor",
+   "label": "Things To Note"
+  },
+  {
+   "fieldname": "visit_date",
+   "fieldtype": "Date",
+   "label": "Visit Date"
+  },
+  {
+   "fieldname": "badges",
+   "fieldtype": "Table",
+   "label": "Badges",
+   "options": "ABK Place Experience Badge Item"
+  },
+  {
+   "fieldname": "moderation_section",
+   "fieldtype": "Section Break",
+   "label": "Moderation"
+  },
+  {
+   "default": "New",
+   "fieldname": "verification_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Verification Status",
+   "options": "New\nReviewing\nApproved\nRejected"
+  },
+  {
+   "default": "0",
+   "fieldname": "published",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Published"
+  },
+  {
+   "fieldname": "admin_notes",
+   "fieldtype": "Text Editor",
+   "label": "Admin Notes"
+  },
+  {
+   "fieldname": "reviewed_by",
+   "fieldtype": "Link",
+   "label": "Reviewed By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "reviewed_on",
+   "fieldtype": "Datetime",
+   "label": "Reviewed On",
+   "read_only": 1
+  }
+ ],
+ "idx": 0,
+ "links": [],
+ "modified": "2026-05-11 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "ABK Portal",
+ "name": "ABK Place Experience",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "role": "ABK Admin",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "if_owner": 1,
+   "read": 1,
+   "role": "Website User"
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "experience_title",
+ "track_changes": 1
+}

@@ -1,3 +1,5 @@
+from collections import Counter
+
 import frappe
 from frappe import _
 from frappe.rate_limiter import rate_limit
@@ -34,6 +36,7 @@ PUBLIC_PLACE_FIELDS = [
 	"address",
 	"google_map_url",
 	"short_description",
+	"full_description",
 	"plus_points",
 	"minus_points",
 	"special_needs_tags",
@@ -467,6 +470,118 @@ def get_published_place_gallery(place):
 		)
 
 	return gallery
+
+
+def get_published_experience_badges():
+	if not frappe.db.exists("DocType", "ABK Experience Badge"):
+		return []
+
+	return frappe.db.get_all(
+		"ABK Experience Badge",
+		fields=["name", "badge_name", "slug", "badge_group", "description", "icon"],
+		filters={"published": 1},
+		order_by="badge_group asc, badge_name asc",
+		limit_page_length=100,
+	)
+
+
+def _get_experience_badges(experience_names):
+	if not experience_names or not frappe.db.exists("DocType", "ABK Place Experience Badge Item"):
+		return {}
+
+	rows = frappe.db.get_all(
+		"ABK Place Experience Badge Item",
+		fields=["parent", "badge"],
+		filters={"parent": ["in", experience_names]},
+		order_by="idx asc",
+	)
+	badge_names = sorted({row.badge for row in rows if row.badge})
+	if not badge_names:
+		return {}
+
+	badges = {
+		row.name: row
+		for row in frappe.db.get_all(
+			"ABK Experience Badge",
+			fields=["name", "badge_name", "slug", "badge_group", "icon"],
+			filters={"name": ["in", badge_names], "published": 1},
+		)
+	}
+
+	badges_by_experience = {}
+	for row in rows:
+		if row.badge in badges:
+			badges_by_experience.setdefault(row.parent, []).append(badges[row.badge])
+
+	return badges_by_experience
+
+
+def get_published_place_experiences(place, limit: int = 20):
+	if not place or not frappe.db.exists("DocType", "ABK Place Experience"):
+		return []
+
+	place_name = place.get("name") if isinstance(place, dict) else place.name
+	rows = frappe.db.get_all(
+		"ABK Place Experience",
+		fields=[
+			"name",
+			"reviewer_name",
+			"reviewer_relationship",
+			"is_anonymous",
+			"experience_title",
+			"experience_text",
+			"helpful_points",
+			"things_to_note",
+			"visit_date",
+			"creation",
+		],
+		filters={
+			"abk_place": place_name,
+			"verification_status": "Approved",
+			"published": 1,
+		},
+		order_by="visit_date desc, creation desc",
+		limit_page_length=limit,
+	)
+	badges_by_experience = _get_experience_badges([row.name for row in rows])
+
+	experiences = []
+	for row in rows:
+		experiences.append(
+			frappe._dict(
+				{
+					"name": row.name,
+					"reviewer_name": "Anonim" if row.is_anonymous else strip_html(cstr(row.reviewer_name or "Parent")).strip(),
+					"reviewer_relationship": row.reviewer_relationship,
+					"is_anonymous": row.is_anonymous,
+					"experience_title": strip_html(cstr(row.experience_title)).strip(),
+					"experience_text": strip_html(cstr(row.experience_text)).strip(),
+					"helpful_points": strip_html(cstr(row.helpful_points)).strip(),
+					"things_to_note": strip_html(cstr(row.things_to_note)).strip(),
+					"visit_date": row.visit_date,
+					"badges": badges_by_experience.get(row.name, []),
+				}
+			)
+		)
+
+	return experiences
+
+
+def get_place_experience_summary(experiences):
+	counter = Counter()
+	for experience in experiences:
+		for badge in experience.badges:
+			counter[badge.badge_name] += 1
+
+	return frappe._dict(
+		{
+			"count": len(experiences),
+			"top_badges": [
+				frappe._dict({"badge_name": badge_name, "count": count})
+				for badge_name, count in counter.most_common(6)
+			],
+		}
+	)
 
 
 def get_published_teacher_by_slug(slug: str):

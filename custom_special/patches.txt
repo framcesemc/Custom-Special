@@ -7,3 +7,4 @@
 custom_special.patches.v1_0.create_abk_admin_role
 custom_special.patches.v1_0.create_abk_article_categories
 custom_special.patches.v1_0.create_abk_article_tags_field
+custom_special.patches.v1_0.create_abk_experience_badges

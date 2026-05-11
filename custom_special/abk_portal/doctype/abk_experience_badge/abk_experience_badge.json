@@ -1,0 +1,92 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:slug",
+ "creation": "2026-05-11 00:00:00.000000",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "engine": "InnoDB",
+ "field_order": [
+  "badge_name",
+  "slug",
+  "badge_group",
+  "description",
+  "icon",
+  "published"
+ ],
+ "fields": [
+  {
+   "fieldname": "badge_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Badge Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "slug",
+   "fieldtype": "Data",
+   "label": "Slug",
+   "unique": 1
+  },
+  {
+   "fieldname": "badge_group",
+   "fieldtype": "Select",
+   "in_standard_filter": 1,
+   "label": "Badge Group",
+   "options": "Sensory\nAccessibility\nService\nFacility\nLearning\nSafety\nOther"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
+  },
+  {
+   "fieldname": "icon",
+   "fieldtype": "Data",
+   "label": "Icon"
+  },
+  {
+   "default": "1",
+   "fieldname": "published",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Published"
+  }
+ ],
+ "idx": 0,
+ "links": [],
+ "modified": "2026-05-11 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "ABK Portal",
+ "name": "ABK Experience Badge",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "read": 1,
+   "role": "ABK Admin",
+   "write": 1
+  }
+ ],
+ "sort_field": "badge_name",
+ "sort_order": "ASC",
+ "states": [],
+ "title_field": "badge_name",
+ "track_changes": 1
+}

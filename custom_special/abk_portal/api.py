@@ -1,7 +1,7 @@
 import frappe
 from frappe import _
 from frappe.rate_limiter import rate_limit
-from frappe.utils import cstr, strip_html, validate_email_address, validate_phone_number
+from frappe.utils import cstr, getdate, strip_html, validate_email_address, validate_phone_number
 
 
 RELATIONSHIP_OPTIONS = {"Parent", "Guardian", "Teacher", "Therapist", "School Staff", "Other"}
@@ -205,3 +205,116 @@ def get_website_user_home_page(user):
 		return "abk"
 
 	return None
+
+
+def _clean_text(value):
+	return strip_html(cstr(value)).strip()
+
+
+def _resolve_public_place(place_slug=None, abk_place=None):
+	filters = {"published": 1, "verification_status": "Published"}
+	if abk_place:
+		filters["name"] = cstr(abk_place).strip()
+	elif place_slug:
+		filters["slug"] = cstr(place_slug).strip()
+	else:
+		frappe.throw(_("Tempat tidak ditemukan."))
+
+	place = frappe.db.get_value("ABK Place", filters, ["name", "place_name"], as_dict=True)
+	if not place:
+		frappe.throw(_("Tempat tidak ditemukan atau belum dipublikasikan."))
+
+	return place
+
+
+def _resolve_experience_badges(badges):
+	if isinstance(badges, str):
+		badges = frappe.parse_json(badges or "[]")
+
+	if not badges:
+		return []
+
+	if not isinstance(badges, list):
+		frappe.throw(_("Pilihan badge tidak valid."))
+
+	resolved = []
+	seen = set()
+	for badge in badges:
+		badge_value = cstr(badge).strip()
+		if not badge_value:
+			continue
+
+		name = frappe.db.get_value(
+			"ABK Experience Badge",
+			{"name": badge_value, "published": 1},
+			"name",
+		) or frappe.db.get_value(
+			"ABK Experience Badge",
+			{"slug": badge_value, "published": 1},
+			"name",
+		)
+		if not name:
+			frappe.throw(_("Badge tidak valid atau belum dipublikasikan."))
+
+		if name not in seen:
+			seen.add(name)
+			resolved.append(name)
+
+	return resolved
+
+
+@frappe.whitelist(allow_guest=True)
+@rate_limit(limit=10, seconds=60 * 60)
+def submit_place_experience(**kwargs):
+	if frappe.session.user == "Guest":
+		frappe.throw(_("Silakan login terlebih dahulu untuk membagikan pengalaman."), frappe.PermissionError)
+
+	place = _resolve_public_place(
+		place_slug=kwargs.get("place_slug"),
+		abk_place=kwargs.get("abk_place"),
+	)
+	reviewer_relationship = cstr(kwargs.get("reviewer_relationship")).strip()
+	if reviewer_relationship and reviewer_relationship not in RELATIONSHIP_OPTIONS:
+		frappe.throw(_("Please choose a valid relationship."))
+
+	experience_text = _clean_text(kwargs.get("experience_text"))
+	if not experience_text:
+		frappe.throw(_("Pengalaman wajib diisi."))
+
+	reviewer_name = _clean_text(kwargs.get("reviewer_name"))
+	if not reviewer_name:
+		reviewer_name = frappe.db.get_value("User", frappe.session.user, "full_name") or frappe.session.user
+
+	visit_date = None
+	if kwargs.get("visit_date"):
+		visit_date = getdate(kwargs.get("visit_date"))
+
+	doc = frappe.get_doc(
+		{
+			"doctype": "ABK Place Experience",
+			"abk_place": place.name,
+			"reviewer_user": frappe.session.user,
+			"reviewer_name": reviewer_name,
+			"reviewer_relationship": reviewer_relationship,
+			"is_anonymous": 1 if cstr(kwargs.get("is_anonymous")).lower() in ("1", "true", "yes", "on") else 0,
+			"experience_title": _clean_text(kwargs.get("experience_title")),
+			"experience_text": experience_text,
+			"helpful_points": _clean_text(kwargs.get("helpful_points")),
+			"things_to_note": _clean_text(kwargs.get("things_to_note")),
+			"visit_date": visit_date,
+			"verification_status": "New",
+			"published": 0,
+		}
+	)
+
+	for badge in _resolve_experience_badges(kwargs.get("badges")):
+		doc.append("badges", {"badge": badge})
+
+	doc.owner = frappe.session.user
+	doc.insert(ignore_permissions=True)
+
+	return {
+		"ok": True,
+		"name": doc.name,
+		"message": _("Terima kasih, pengalaman Anda sudah dikirim dan akan dicek admin."),
+	}

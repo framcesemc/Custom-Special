@@ -3,10 +3,27 @@ import frappe
 from custom_special.abk_portal.public import ABK_ARTICLE_CATEGORIES
 
 
+ABK_EXPERIENCE_BADGES = [
+	("Ramah Sensory", "Sensory", "Lingkungan terasa mendukung untuk kebutuhan sensory."),
+	("Ruang Tunggu Nyaman", "Facility", "Area tunggu cukup nyaman untuk anak dan pendamping."),
+	("Staff Komunikatif", "Service", "Staff mudah diajak komunikasi dan responsif."),
+	("Guru/Terapis Sabar", "Service", "Guru atau terapis sabar mendampingi anak."),
+	("Tidak Terlalu Ramai", "Sensory", "Suasana relatif tidak terlalu ramai."),
+	("Cocok untuk Early Intervention", "Learning", "Cocok untuk dukungan intervensi dini."),
+	("Cocok untuk Anak Non-Verbal", "Learning", "Pendekatan mendukung anak non-verbal."),
+	("Akses Kursi Roda", "Accessibility", "Akses tempat mendukung kursi roda."),
+	("Parkir Mudah", "Facility", "Akses parkir relatif mudah."),
+	("Toilet Bersih", "Facility", "Toilet bersih dan nyaman digunakan."),
+	("Jadwal Fleksibel", "Service", "Pengaturan jadwal relatif fleksibel."),
+	("Admin Responsif", "Service", "Admin mudah dihubungi dan responsif."),
+]
+
+
 def after_install():
 	create_abk_admin_role()
 	create_abk_article_categories()
 	create_abk_article_tags_field()
+	create_abk_experience_badges()
 
 
 def create_abk_admin_role():
@@ -62,3 +79,19 @@ def create_abk_article_tags_field():
 	field.description = "Comma-separated frontend tags, for example: autism, sensory friendly, sekolah inklusi"
 	field.insert(ignore_permissions=True)
 	frappe.clear_cache(doctype="Blog Post")
+
+
+def create_abk_experience_badges():
+	if not frappe.db.exists("DocType", "ABK Experience Badge"):
+		return
+
+	for badge_name, badge_group, description in ABK_EXPERIENCE_BADGES:
+		if frappe.db.exists("ABK Experience Badge", {"badge_name": badge_name}):
+			continue
+
+		doc = frappe.new_doc("ABK Experience Badge")
+		doc.badge_name = badge_name
+		doc.badge_group = badge_group
+		doc.description = description
+		doc.published = 1
+		doc.insert(ignore_permissions=True)
