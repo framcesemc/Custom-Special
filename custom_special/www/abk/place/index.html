@@ -53,11 +53,14 @@
                     </div>
                 </div>
 
-                <!-- Full Description -->
+                <!-- ======= FULL DESCRIPTION ======= -->
                 {% if place_description %}
-                <section class="bg-white rounded-abk p-6 lg:p-7 shadow-sm border border-orange-50">
-                    <h2 class="text-2xl font-black text-abk-dark mb-4">Tentang Tempat Ini</h2>
-                    <div class="text-slate-600 text-base leading-relaxed whitespace-pre-line">
+                <section class="bg-white rounded-abk shadow-sm border border-orange-50 overflow-hidden">
+                    <div class="bg-orange-50 border-b border-orange-100 px-6 py-4 flex items-center gap-3">
+                        <span class="text-xl">📋</span>
+                        <h2 class="text-lg font-black text-orange-900">Tentang Tempat Ini</h2>
+                    </div>
+                    <div class="p-6 text-slate-600 text-base leading-relaxed whitespace-pre-line">
                         {{ place_description | safe if place.full_description else place_description }}
                     </div>
                 </section>
@@ -77,81 +80,102 @@
                 </div>
                 {% endif %}
 
-                <!-- Plus / Minus -->
+                <!-- ======= PLUS / MINUS ======= -->
                 {% if place.plus_points or place.minus_points %}
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    {% if place.plus_points %}
-                    <div class="bg-green-50 p-6 rounded-abk border-t-4 border-green-400">
-                        <h3 class="font-black text-green-800 mb-3 flex items-center gap-2 text-base">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
-                            Kelebihan
-                        </h3>
-                        <div class="text-green-900/75 text-sm leading-relaxed whitespace-pre-line">{{ place.plus_points }}</div>
+                <div class="bg-white rounded-abk shadow-sm border border-orange-50 overflow-hidden">
+                    <div class="bg-green-50 border-b border-green-100 px-6 py-4 flex items-center gap-3">
+                        <span class="text-xl">⚖️</span>
+                        <h2 class="text-lg font-black text-green-900">Kelebihan &amp; Catatan</h2>
                     </div>
-                    {% endif %}
-                    {% if place.minus_points %}
-                    <div class="bg-amber-50 p-6 rounded-abk border-t-4 border-amber-400">
-                        <h3 class="font-black text-amber-800 mb-3 flex items-center gap-2 text-base">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                            Perlu Diperhatikan
-                        </h3>
-                        <div class="text-amber-900/75 text-sm leading-relaxed whitespace-pre-line">{{ place.minus_points }}</div>
+                    <div class="p-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {% if place.plus_points %}
+                        <div class="bg-green-50/50 p-5 rounded-2xl border border-green-100">
+                            <div class="text-xs font-black text-green-700 uppercase tracking-widest mb-2 flex items-center gap-1.5">✅ Kelebihan</div>
+                            <div class="text-green-900/75 text-sm leading-relaxed whitespace-pre-line">{{ place.plus_points }}</div>
+                        </div>
+                        {% endif %}
+                        {% if place.minus_points %}
+                        <div class="bg-amber-50/50 p-5 rounded-2xl border border-amber-100">
+                            <div class="text-xs font-black text-amber-700 uppercase tracking-widest mb-2 flex items-center gap-1.5">⚠️ Perlu Diperhatikan</div>
+                            <div class="text-amber-900/75 text-sm leading-relaxed whitespace-pre-line">{{ place.minus_points }}</div>
+                        </div>
+                        {% endif %}
                     </div>
-                    {% endif %}
                 </div>
                 {% endif %}
 
-                <!-- Gallery -->
+                <!-- ======= GALLERY SLIDER ======= -->
                 {% if gallery %}
-                <section class="bg-white rounded-abk p-6 lg:p-7 shadow-sm border border-orange-50">
-                    <div class="flex items-end justify-between gap-4 mb-6">
+                <section class="bg-white rounded-abk shadow-sm border border-orange-50 overflow-hidden">
+                    <!-- Section header -->
+                    <div class="bg-purple-50 border-b border-purple-100 px-6 py-4 flex items-center gap-3">
+                        <span class="text-xl">📸</span>
                         <div>
-                            <h2 class="text-2xl font-black text-abk-dark mb-2">Galeri</h2>
-                            <p class="text-slate-500 text-sm">Foto dan video untuk membantu orang tua melihat suasana tempat.</p>
+                            <h2 class="text-lg font-black text-purple-900">Galeri</h2>
+                            <p class="text-purple-600/70 text-xs font-semibold">{{ gallery | length }} foto/video</p>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        {% for media in gallery %}
-                        <figure class="bg-slate-50 rounded-3xl overflow-hidden shadow-sm border border-slate-100 {% if loop.first %}md:col-span-2{% endif %}">
-                            <div class="bg-slate-100 {% if loop.first %}aspect-video{% else %}aspect-[4/3]{% endif %}">
+                    <div class="p-5">
+                        <!-- Main display -->
+                        <div id="gallery-main" class="relative rounded-2xl overflow-hidden bg-slate-100 aspect-video mb-4">
+                            {% for media in gallery %}
+                            <div class="gallery-slide absolute inset-0 transition-opacity duration-300 {% if loop.first %}opacity-100{% else %}opacity-0 pointer-events-none{% endif %}" data-idx="{{ loop.index0 }}">
                                 {% if media.render_type == "Image" %}
-                                <img src="{{ media.source }}"
-                                     class="w-full h-full object-cover"
-                                     loading="lazy"
-                                     alt="{{ media.caption or place.place_name }}">
+                                <img src="{{ media.source }}" class="w-full h-full object-cover cursor-pointer" loading="lazy" alt="{{ media.caption or place.place_name }}" onclick="openLightbox({{ loop.index0 }})">
                                 {% elif media.render_type == "Video" %}
-                                <video class="w-full h-full object-cover bg-black"
-                                       controls
-                                       preload="metadata">
-                                    <source src="{{ media.source }}">
-                                    Browser Anda tidak mendukung pemutar video.
-                                </video>
+                                <video class="w-full h-full object-cover bg-black" controls preload="metadata"><source src="{{ media.source }}"></video>
                                 {% elif media.render_type == "YouTube" %}
-                                <iframe class="w-full h-full bg-black"
-                                        src="{{ media.embed_url }}"
-                                        title="{{ media.caption or place.place_name }}"
-                                        loading="lazy"
-                                        allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                        allowfullscreen></iframe>
+                                <iframe class="w-full h-full bg-black" src="{{ media.embed_url }}" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                                 {% else %}
-                                <div class="w-full h-full flex items-center justify-center p-8 text-center">
-                                    <a href="{{ media.source }}" target="_blank" rel="noopener noreferrer"
-                                       class="inline-flex items-center justify-center bg-white text-orange-600 font-black text-sm px-5 py-3 rounded-full shadow-sm no-underline hover:text-orange-700 transition-colors">
-                                        Buka Media Eksternal →
-                                    </a>
-                                </div>
+                                <div class="w-full h-full flex items-center justify-center"><a href="{{ media.source }}" target="_blank" class="btn-abk-outline text-sm no-underline">Buka Media →</a></div>
                                 {% endif %}
                             </div>
-                            {% if media.caption %}
-                            <figcaption class="px-5 py-4 text-sm font-semibold text-slate-500 leading-relaxed">
-                                {{ media.caption }}
-                            </figcaption>
+                            {% endfor %}
+                            {% if gallery | length > 1 %}
+                            <button onclick="slideGallery(-1)" class="absolute left-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white shadow-lg w-10 h-10 rounded-full flex items-center justify-center text-slate-600 z-20 transition-all">‹</button>
+                            <button onclick="slideGallery(1)" class="absolute right-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white shadow-lg w-10 h-10 rounded-full flex items-center justify-center text-slate-600 z-20 transition-all">›</button>
+                            <div class="absolute bottom-3 left-1/2 -translate-x-1/2 bg-black/50 text-white text-xs font-bold px-3 py-1 rounded-full z-20"><span id="gallery-counter">1</span> / {{ gallery | length }}</div>
                             {% endif %}
-                        </figure>
-                        {% endfor %}
+                        </div>
+
+                        <!-- Thumbnail strip -->
+                        {% if gallery | length > 1 %}
+                        <div class="flex gap-2 overflow-x-auto pb-2" id="gallery-thumbs">
+                            {% for media in gallery %}
+                            <button onclick="goToSlide({{ loop.index0 }})" class="gallery-thumb flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-all duration-200 {% if loop.first %}border-orange-500 ring-2 ring-orange-200{% else %}border-transparent opacity-60 hover:opacity-100{% endif %}">
+                                {% if media.render_type == "Image" %}
+                                <img src="{{ media.source }}" class="w-full h-full object-cover" alt="thumb">
+                                {% else %}
+                                <div class="w-full h-full bg-slate-200 flex items-center justify-center text-lg">🎬</div>
+                                {% endif %}
+                            </button>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
                     </div>
                 </section>
+
+                <!-- Lightbox Modal -->
+                <div id="lightbox" class="fixed inset-0 bg-black/90 z-50 hidden items-center justify-center" onclick="closeLightbox(event)">
+                    <!-- Close -->
+                    <button onclick="closeLightbox()" class="absolute top-4 right-4 text-white text-3xl font-bold z-50 hover:text-orange-400 transition-colors">✕</button>
+                    <!-- Nav arrows -->
+                    <button onclick="lbNav(-1)" class="absolute left-4 top-1/2 -translate-y-1/2 text-white text-4xl z-50 hover:text-orange-400">‹</button>
+                    <button onclick="lbNav(1)" class="absolute right-4 top-1/2 -translate-y-1/2 text-white text-4xl z-50 hover:text-orange-400">›</button>
+                    <!-- Zoom toolbar -->
+                    <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-1 bg-black/60 backdrop-blur rounded-full px-2 py-1">
+                        <button onclick="lbZoom(-1);event.stopPropagation()" class="text-white hover:text-orange-400 w-9 h-9 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors text-lg font-bold">−</button>
+                        <span id="lb-zoom-pct" class="text-white text-xs font-bold w-12 text-center">100%</span>
+                        <button onclick="lbZoom(1);event.stopPropagation()" class="text-white hover:text-orange-400 w-9 h-9 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors text-lg font-bold">+</button>
+                        <div class="w-px h-5 bg-white/20 mx-1"></div>
+                        <button onclick="lbZoomReset();event.stopPropagation()" class="text-white hover:text-orange-400 w-9 h-9 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors text-xs font-bold">⟳</button>
+                    </div>
+                    <!-- Image container (draggable when zoomed) -->
+                    <div id="lb-container" class="w-full h-full flex items-center justify-center overflow-hidden cursor-grab" style="touch-action:none;">
+                        <img id="lightbox-img" class="max-w-full max-h-[90vh] rounded-2xl shadow-2xl select-none transition-transform duration-150" draggable="false" src="" alt="" style="transform-origin:center center;">
+                    </div>
+                </div>
                 {% endif %}
 
                 <!-- Address -->
@@ -170,88 +194,100 @@
                 </div>
                 {% endif %}
 
-                <!-- Parent Experiences -->
-                <section id="parent-experience" class="bg-white rounded-abk p-6 lg:p-7 shadow-sm border border-orange-50">
-                    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
-                        <div>
-                            <div class="text-xs font-black text-orange-500 uppercase tracking-widest mb-2">Pengalaman Parent</div>
-                            <h2 class="text-2xl font-black text-abk-dark mb-2">{{ experience_summary.count }} parent telah membagikan pengalaman</h2>
-                            <p class="text-slate-500 text-sm">Cerita yang tampil di sini sudah dicek admin agar tetap aman dan relevan.</p>
+                <!-- ======= PARENT EXPERIENCES ======= -->
+                <section id="parent-experience" class="bg-white rounded-abk shadow-sm border border-orange-50 overflow-hidden">
+                    <!-- Section header -->
+                    <div class="bg-blue-50 border-b border-blue-100 px-6 py-4 flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-3">
+                            <span class="text-xl">💬</span>
+                            <div>
+                                <h2 class="text-lg font-black text-blue-900">Pengalaman Parent</h2>
+                                <p class="text-blue-600/70 text-xs font-semibold">{{ experience_summary.count }} cerita terverifikasi</p>
+                            </div>
                         </div>
-                        <a href="#share-experience" class="btn-abk-outline text-sm py-2.5 px-5 no-underline text-center">Bagikan Pengalaman</a>
+                        <a href="#share-experience" class="btn-abk-outline text-xs py-2 px-4 no-underline">+ Bagikan</a>
                     </div>
 
-                    {% if experience_summary.top_badges %}
-                    <div class="flex flex-wrap gap-2 mb-7">
-                        {% for badge in experience_summary.top_badges %}
-                        <span class="bg-orange-50 text-orange-700 text-xs font-black px-3 py-1.5 rounded-full">
-                            {{ badge.badge_name }} ({{ badge.count }})
-                        </span>
-                        {% endfor %}
-                    </div>
-                    {% endif %}
+                    <div class="p-5">
+                        {% if experience_summary.top_badges %}
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            {% for badge in experience_summary.top_badges %}
+                            <span class="bg-blue-50 text-blue-700 text-xs font-black px-3 py-1 rounded-full border border-blue-100">
+                                {{ badge.badge_name }} ({{ badge.count }})
+                            </span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
 
-                    <div class="space-y-5">
-                        {% for experience in experiences %}
-                        <article class="bg-slate-50 rounded-3xl p-5 border border-slate-100">
-                            <div class="flex flex-col md:flex-row md:items-start justify-between gap-3 mb-4">
-                                <div>
-                                    <h3 class="text-lg font-black text-abk-dark mb-1">{{ experience.experience_title or "Pengalaman parent" }}</h3>
-                                    <div class="text-xs font-bold text-slate-400">
-                                        {{ experience.reviewer_name }}
-                                        {% if experience.reviewer_relationship %} · {{ experience.reviewer_relationship }}{% endif %}
-                                        {% if experience.visit_date %} · {{ frappe.format_date(experience.visit_date) }}{% endif %}
+                        <div id="exp-list" class="space-y-4">
+                            {% for experience in experiences %}
+                            <article class="exp-item bg-slate-50 rounded-2xl p-5 border border-slate-100 {% if loop.index > 3 %}hidden{% endif %}">
+                                <div class="flex flex-col md:flex-row md:items-start justify-between gap-2 mb-3">
+                                    <div>
+                                        <h3 class="text-base font-black text-abk-dark mb-1">{{ experience.experience_title or "Pengalaman parent" }}</h3>
+                                        <div class="text-xs font-semibold text-slate-400">
+                                            {{ experience.reviewer_name }}
+                                            {% if experience.reviewer_relationship %} · {{ experience.reviewer_relationship }}{% endif %}
+                                            {% if experience.visit_date %} · {{ frappe.format_date(experience.visit_date) }}{% endif %}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-
-                            {% if experience.badges %}
-                            <div class="flex flex-wrap gap-2 mb-4">
-                                {% for badge in experience.badges %}
-                                <span class="bg-white text-orange-600 text-[11px] font-black px-3 py-1 rounded-full border border-orange-100">
-                                    {{ badge.icon or "" }} {{ badge.badge_name }}
-                                </span>
-                                {% endfor %}
-                            </div>
-                            {% endif %}
-
-                            <div class="text-slate-600 text-sm leading-relaxed whitespace-pre-line">{{ experience.experience_text }}</div>
-
-                            {% if experience.helpful_points or experience.things_to_note %}
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
-                                {% if experience.helpful_points %}
-                                <div class="bg-green-50 rounded-2xl p-4">
-                                    <div class="text-xs font-black text-green-700 uppercase tracking-widest mb-2">Yang Membantu</div>
-                                    <div class="text-green-900/75 text-sm leading-relaxed whitespace-pre-line">{{ experience.helpful_points }}</div>
+                                {% if experience.badges %}
+                                <div class="flex flex-wrap gap-1.5 mb-3">
+                                    {% for badge in experience.badges %}
+                                    <span class="bg-white text-orange-600 text-[10px] font-black px-2.5 py-0.5 rounded-full border border-orange-100">{{ badge.icon or "" }} {{ badge.badge_name }}</span>
+                                    {% endfor %}
                                 </div>
                                 {% endif %}
-                                {% if experience.things_to_note %}
-                                <div class="bg-amber-50 rounded-2xl p-4">
-                                    <div class="text-xs font-black text-amber-700 uppercase tracking-widest mb-2">Hal yang Perlu Diperhatikan</div>
-                                    <div class="text-amber-900/75 text-sm leading-relaxed whitespace-pre-line">{{ experience.things_to_note }}</div>
+                                <div class="text-slate-600 text-sm leading-relaxed whitespace-pre-line">{{ experience.experience_text }}</div>
+                                {% if experience.helpful_points or experience.things_to_note %}
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+                                    {% if experience.helpful_points %}
+                                    <div class="bg-green-50 rounded-xl p-3">
+                                        <div class="text-[10px] font-black text-green-700 uppercase tracking-widest mb-1">✅ Yang Membantu</div>
+                                        <div class="text-green-900/75 text-xs leading-relaxed whitespace-pre-line">{{ experience.helpful_points }}</div>
+                                    </div>
+                                    {% endif %}
+                                    {% if experience.things_to_note %}
+                                    <div class="bg-amber-50 rounded-xl p-3">
+                                        <div class="text-[10px] font-black text-amber-700 uppercase tracking-widest mb-1">⚠️ Perlu Diperhatikan</div>
+                                        <div class="text-amber-900/75 text-xs leading-relaxed whitespace-pre-line">{{ experience.things_to_note }}</div>
+                                    </div>
+                                    {% endif %}
                                 </div>
                                 {% endif %}
+                            </article>
+                            {% else %}
+                            <div class="bg-slate-50 rounded-2xl p-6 text-center border border-dashed border-slate-200">
+                                <div class="text-3xl mb-2">💬</div>
+                                <h3 class="text-base font-black text-abk-dark mb-1">Belum ada pengalaman</h3>
+                                <p class="text-slate-400 text-sm">Jadilah parent pertama yang berbagi!</p>
                             </div>
-                            {% endif %}
-                        </article>
-                        {% else %}
-                        <div class="bg-slate-50 rounded-3xl p-6 text-center border border-dashed border-slate-200">
-                            <h3 class="text-lg font-black text-abk-dark mb-2">Belum ada pengalaman yang dipublikasikan</h3>
-                            <p class="text-slate-500 text-sm">Jadilah parent pertama yang berbagi setelah pengalaman Anda diverifikasi admin.</p>
+                            {% endfor %}
                         </div>
-                        {% endfor %}
+
+                        {% if experiences | length > 3 %}
+                        <div class="text-center mt-5">
+                            <button id="exp-load-more" onclick="loadMoreExp()" class="btn-abk-outline text-sm py-2.5 px-6">
+                                Tampilkan {{ experiences | length - 3 }} pengalaman lainnya ↓
+                            </button>
+                        </div>
+                        {% endif %}
                     </div>
                 </section>
 
                 <!-- Submit Experience -->
-                <section id="share-experience" class="bg-white rounded-abk p-6 lg:p-7 shadow-sm border border-orange-50">
-                    <div class="mb-6">
-                        <div class="text-xs font-black text-orange-500 uppercase tracking-widest mb-2">Berbagi dengan Aman</div>
-                        <h2 class="text-2xl font-black text-abk-dark mb-2">Bagikan Pengalaman</h2>
-                        <p class="text-slate-500 text-sm">Pengalaman Anda membantu parent lain memahami konteks tempat ini. Semua kiriman akan dicek admin sebelum tampil.</p>
+                <section id="share-experience" class="bg-white rounded-abk shadow-sm border border-orange-50 overflow-hidden">
+                    <!-- Section header -->
+                    <div class="bg-amber-50 border-b border-amber-100 px-6 py-4 flex items-center gap-3">
+                        <span class="text-xl">✍️</span>
+                        <div>
+                            <h2 class="text-lg font-black text-amber-900">Bagikan Pengalaman</h2>
+                            <p class="text-amber-600/70 text-xs font-semibold">Semua kiriman akan dicek admin sebelum tampil.</p>
+                        </div>
                     </div>
 
-                    {% if is_guest %}
+                    <div class="p-5">                    {% if is_guest %}
                     <div class="bg-orange-50 rounded-3xl p-6 border border-orange-100">
                         <h3 class="text-lg font-black text-abk-dark mb-2">Login untuk membagikan pengalaman</h3>
                         <p class="text-slate-600 text-sm leading-relaxed mb-5">Login untuk membagikan pengalaman agar informasi tetap aman dan terpercaya.</p>
@@ -350,6 +386,7 @@
                         </button>
                     </form>
                     {% endif %}
+                    </div><!-- end p-5 wrapper -->
                 </section>
             </div>
 
@@ -419,6 +456,133 @@
 
 {% block script %}
 <script>
+/* ======= Gallery Slider ======= */
+var galleryIdx = 0;
+var slides = document.querySelectorAll('.gallery-slide');
+var thumbs = document.querySelectorAll('.gallery-thumb');
+var counter = document.getElementById('gallery-counter');
+var gallerySources = [];
+slides.forEach(function(s) {
+    var img = s.querySelector('img');
+    gallerySources.push(img ? img.src : '');
+});
+
+function goToSlide(idx) {
+    if (!slides.length) return;
+    idx = ((idx % slides.length) + slides.length) % slides.length;
+    slides.forEach(function(s, i) {
+        s.classList.toggle('opacity-100', i === idx);
+        s.classList.toggle('opacity-0', i !== idx);
+        s.classList.toggle('pointer-events-none', i !== idx);
+    });
+    thumbs.forEach(function(t, i) {
+        t.classList.toggle('border-orange-500', i === idx);
+        t.classList.toggle('ring-2', i === idx);
+        t.classList.toggle('ring-orange-200', i === idx);
+        t.classList.toggle('border-transparent', i !== idx);
+        t.classList.toggle('opacity-60', i !== idx);
+    });
+    if (counter) counter.textContent = idx + 1;
+    galleryIdx = idx;
+}
+function slideGallery(dir) { goToSlide(galleryIdx + dir); }
+
+/* ======= Lightbox + Zoom ======= */
+var lbScale = 1, lbPanX = 0, lbPanY = 0, lbDragging = false, lbStartX = 0, lbStartY = 0;
+var LB_MIN = 0.5, LB_MAX = 5, LB_STEP = 0.3;
+
+function lbApply() {
+    var img = document.getElementById('lightbox-img');
+    if (img) img.style.transform = 'scale(' + lbScale + ') translate(' + lbPanX + 'px,' + lbPanY + 'px)';
+    var pct = document.getElementById('lb-zoom-pct');
+    if (pct) pct.textContent = Math.round(lbScale * 100) + '%';
+    var ctr = document.getElementById('lb-container');
+    if (ctr) ctr.style.cursor = lbScale > 1 ? (lbDragging ? 'grabbing' : 'grab') : 'default';
+}
+function lbZoomReset() { lbScale = 1; lbPanX = 0; lbPanY = 0; lbApply(); }
+function lbZoom(dir) {
+    lbScale = Math.max(LB_MIN, Math.min(LB_MAX, lbScale + dir * LB_STEP));
+    if (lbScale <= 1) { lbPanX = 0; lbPanY = 0; }
+    lbApply();
+}
+
+function openLightbox(idx) {
+    var lb = document.getElementById('lightbox');
+    var img = document.getElementById('lightbox-img');
+    if (!lb || !img || !gallerySources[idx]) return;
+    img.src = gallerySources[idx];
+    lbZoomReset();
+    lb.classList.remove('hidden'); lb.classList.add('flex');
+    galleryIdx = idx;
+    document.body.style.overflow = 'hidden';
+}
+function closeLightbox(e) {
+    if (e && e.target.id !== 'lightbox' && e.target.id !== 'lb-container') return;
+    var lb = document.getElementById('lightbox');
+    if (lb) { lb.classList.add('hidden'); lb.classList.remove('flex'); }
+    document.body.style.overflow = '';
+    lbZoomReset();
+}
+function lbNav(dir) {
+    var next = galleryIdx + dir;
+    while (next >= 0 && next < gallerySources.length && !gallerySources[next]) next += dir;
+    if (next >= 0 && next < gallerySources.length) {
+        galleryIdx = next;
+        document.getElementById('lightbox-img').src = gallerySources[next];
+        lbZoomReset();
+    }
+}
+
+/* Keyboard: arrows, esc, +/- zoom */
+document.addEventListener('keydown', function(e) {
+    var lb = document.getElementById('lightbox');
+    if (!lb || lb.classList.contains('hidden')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') lbNav(-1);
+    if (e.key === 'ArrowRight') lbNav(1);
+    if (e.key === '+' || e.key === '=') { e.preventDefault(); lbZoom(1); }
+    if (e.key === '-') { e.preventDefault(); lbZoom(-1); }
+    if (e.key === '0') { e.preventDefault(); lbZoomReset(); }
+});
+
+/* Mouse wheel zoom */
+(function() {
+    var ctr = document.getElementById('lb-container');
+    if (!ctr) return;
+    ctr.addEventListener('wheel', function(e) {
+        e.preventDefault(); e.stopPropagation();
+        lbZoom(e.deltaY < 0 ? 1 : -1);
+    }, {passive: false});
+
+    /* Drag to pan when zoomed */
+    ctr.addEventListener('pointerdown', function(e) {
+        if (lbScale <= 1) return;
+        lbDragging = true; lbStartX = e.clientX - lbPanX * lbScale; lbStartY = e.clientY - lbPanY * lbScale;
+        ctr.setPointerCapture(e.pointerId);
+        lbApply();
+    });
+    ctr.addEventListener('pointermove', function(e) {
+        if (!lbDragging) return;
+        lbPanX = (e.clientX - lbStartX) / lbScale; lbPanY = (e.clientY - lbStartY) / lbScale;
+        lbApply();
+    });
+    ctr.addEventListener('pointerup', function() { lbDragging = false; lbApply(); });
+    ctr.addEventListener('pointercancel', function() { lbDragging = false; lbApply(); });
+
+    /* Double-click to toggle zoom */
+    ctr.addEventListener('dblclick', function(e) {
+        e.stopPropagation();
+        if (lbScale > 1) { lbZoomReset(); } else { lbScale = 2.5; lbApply(); }
+    });
+})();
+
+/* ======= Experience Load More ======= */
+function loadMoreExp() {
+    document.querySelectorAll('.exp-item.hidden').forEach(function(el) { el.classList.remove('hidden'); });
+    var btn = document.getElementById('exp-load-more');
+    if (btn) btn.style.display = 'none';
+}
+
 frappe.ready(function() {
     const form = document.getElementById("abk-inquiry-form");
     if (form) {
