@@ -55,7 +55,13 @@
                             {% endif %}
                             <input class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" name="phone" required placeholder="No. telepon / WhatsApp">
                             {% if is_guest %}
-                            <input class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" name="password" type="password" required placeholder="Password">
+                            <div class="md:col-span-2">
+                                <input id="abk-register-password" class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" name="password" type="password" required autocomplete="new-password" placeholder="Password">
+                                <p class="mt-2 mb-0 text-xs text-gray-500 font-semibold leading-relaxed">
+                                    Gunakan password kuat sesuai kebijakan: hindari nama/email/kata umum, buat cukup panjang, dan kombinasikan huruf besar, huruf kecil, angka, serta simbol.
+                                </p>
+                                <p id="abk-password-strength" class="hidden mt-2 mb-0 text-xs font-bold"></p>
+                            </div>
                             {% endif %}
                             <select class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" name="relationship" required>
                                 <option value="">Hubungan</option>
@@ -67,7 +73,7 @@
                             <input class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-abk-primary/20 text-gray-700 font-medium" name="district" placeholder="Kecamatan">
                         </div>
                         <div class="bg-indigo-50 p-6 rounded-2xl border border-indigo-100">
-                            <p class="text-xs text-indigo-900/70 font-bold leading-relaxed mb-0">Akun ini hanya untuk akses frontend ABK Portal. Admin akan memverifikasi sebelum fitur sensitif seperti submit referensi aktif.</p>
+                            <p class="text-xs text-indigo-900/70 font-bold leading-relaxed mb-0">Akun ini hanya untuk akses Member. Admin akan memverifikasi sebelum bisa mengakses fitur-fitur.</p>
                         </div>
                         <button type="submit" class="w-full btn-abk-primary text-xl py-5 shadow-2xl shadow-abk-primary/40">Daftar Member</button>
                         <p class="text-center text-gray-500 mb-0">Sudah punya akun? <a href="/abk/login?redirect-to=/abk/submit-info" class="font-bold text-abk-primary">Login</a></p>
@@ -85,28 +91,109 @@
 frappe.ready(function() {
 	const form = document.getElementById("abk-register-form");
 	if (!form) return;
+	const passwordInput = document.getElementById("abk-register-password");
+	const passwordStrength = document.getElementById("abk-password-strength");
+	let passwordStrengthTimer = null;
+
+	function getServerMessage(response, fallback) {
+		if (response && response._server_messages) {
+			try {
+				const messages = JSON.parse(response._server_messages);
+				const first = messages && messages[0] ? JSON.parse(messages[0]) : null;
+				if (first && first.message) return first.message;
+			} catch (_) {}
+		}
+		return (response && response.message) || fallback;
+	}
+
+	function resetButton(btn, text) {
+		btn.disabled = false;
+		btn.textContent = text;
+	}
+
+	function showRegisterError(btn, originalText, response, fallback) {
+		resetButton(btn, originalText);
+		// Frappe auto-displays _server_messages via msgprint; only show manually if absent
+		if (response && response._server_messages) {
+			return;
+		}
+		frappe.msgprint(getServerMessage(response, fallback));
+	}
+
+	function showPasswordStrength(feedback) {
+		if (!passwordStrength || !feedback) return;
+		const passed = feedback.password_policy_validation_passed;
+		const parts = [];
+		if (feedback.warning) parts.push(feedback.warning);
+		if (Array.isArray(feedback.suggestions)) parts.push(...feedback.suggestions);
+
+		passwordStrength.textContent = passed
+			? "Password valid sesuai kebijakan Frappe."
+			: (parts.join(" ") || "Password belum cukup kuat.");
+		passwordStrength.className = passed
+			? "mt-2 mb-0 text-xs font-bold text-green-600"
+			: "mt-2 mb-0 text-xs font-bold text-red-600";
+	}
+
+	passwordInput && passwordInput.addEventListener("input", function() {
+		clearTimeout(passwordStrengthTimer);
+		if (!passwordInput.value) {
+			passwordStrength.classList.add("hidden");
+			return;
+		}
+
+		passwordStrengthTimer = setTimeout(function() {
+			const formData = Object.fromEntries(new FormData(form));
+			frappe.call({
+				method: "frappe.core.doctype.user.user.test_password_strength",
+				args: {
+					new_password: passwordInput.value,
+					user_data: [formData.full_name || "", formData.email || ""],
+				},
+				callback(response) {
+					const result = response.message || {};
+					if (result.feedback) {
+						showPasswordStrength(result.feedback);
+					}
+				},
+			});
+		}, 350);
+	});
 
 	form.addEventListener("submit", function(event) {
 		event.preventDefault();
 		const btn = form.querySelector('button[type="submit"]');
-		const originalText = btn.textContent;
+		const originalText = btn.textContent.trim();
 		btn.disabled = true;
 		btn.textContent = "Mendaftarkan...";
 
-		frappe.call({
+		const req = frappe.call({
 			method: {{ '"custom_special.abk_portal.api.register_abk_member"' if is_guest else '"custom_special.abk_portal.api.complete_abk_member_profile"' }},
 			args: Object.fromEntries(new FormData(form)),
-			callback() {
+			callback(r) {
+				if (r && r.exc) {
+					// frappe already shows msgprint via _server_messages automatically
+					return;
+				}
 				form.classList.add("hidden");
 				document.getElementById("register-success").classList.remove("hidden");
 				window.scrollTo(0, 0);
 			},
 			error(response) {
-				btn.disabled = false;
-				btn.textContent = originalText;
-				frappe.msgprint(response.message || "Registrasi belum berhasil. Silakan coba lagi.");
+				showRegisterError(btn, originalText, response, "Registrasi belum berhasil. Silakan coba lagi.");
 			},
 		});
+
+		// Frappe website.js may swallow 417 errors without calling our callback.
+		// .always() unconditionally re-enables the button when the XHR completes.
+		if (req && typeof req.always === "function") {
+			req.always(function() {
+				// Only re-enable if the success state hasn't been shown
+				if (!form.classList.contains("hidden")) {
+					resetButton(btn, originalText);
+				}
+			});
+		}
 	});
 });
 </script>

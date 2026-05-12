@@ -255,6 +255,73 @@ def get_website_user_home_page(user):
 	return None
 
 
+@frappe.whitelist()
+def update_member_avatar(file_url):
+	"""Update the logged-in user's profile picture."""
+	if frappe.session.user == "Guest":
+		frappe.throw(_("Please login first."))
+
+	file_url = cstr(file_url).strip()
+	if not file_url:
+		frappe.throw(_("File URL is required."))
+
+	frappe.db.set_value("User", frappe.session.user, "user_image", file_url)
+	frappe.db.commit()
+	return {"ok": True}
+
+
+@frappe.whitelist()
+def update_member_profile(phone, city=None, district=None):
+	"""Update phone and address for logged-in user's profile."""
+	if frappe.session.user == "Guest":
+		frappe.throw(_("Please login first."))
+
+	phone = strip_html(cstr(phone)).strip()
+	city = strip_html(cstr(city)).strip()
+	district = strip_html(cstr(district)).strip()
+
+	if not phone:
+		frappe.throw(_("Phone number is required."))
+	if not validate_phone_number(phone):
+		frappe.throw(_("Please enter a valid phone number."))
+
+	profile_name = frappe.db.get_value("ABK Member Profile", {"user": frappe.session.user}, "name")
+	if not profile_name:
+		frappe.throw(_("Member profile not found."))
+
+	frappe.db.set_value("ABK Member Profile", profile_name, {
+		"phone": phone,
+		"city": city,
+		"district": district
+	})
+	return {"ok": True, "message": _("Profil berhasil diperbarui.")}
+
+
+@frappe.whitelist()
+def change_member_password(old_password, new_password):
+	"""Change the logged-in member's password after verifying old password."""
+	if frappe.session.user == "Guest":
+		frappe.throw(_("Please login first."))
+
+	old_password = cstr(old_password)
+	new_password = cstr(new_password)
+
+	if not old_password or not new_password:
+		frappe.throw(_("Old password and new password are required."))
+
+	# Verify old password
+	from frappe.utils.password import check_password
+	try:
+		check_password(frappe.session.user, old_password)
+	except frappe.AuthenticationError:
+		frappe.throw(_("Password lama tidak sesuai."))
+
+	# Update password using Frappe's built-in (enforces password policy)
+	from frappe.utils.password import update_password
+	update_password(frappe.session.user, new_password)
+	return {"ok": True, "message": _("Password berhasil diperbarui.")}
+
+
 def _clean_text(value):
 	return strip_html(cstr(value)).strip()
 
