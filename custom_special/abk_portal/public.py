@@ -635,15 +635,15 @@ def submit_parent_inquiry(
 	return {"name": doc.name}
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 @rate_limit(limit=20, seconds=60 * 60)
 def submit_user_submitted_info(**kwargs):
-	if frappe.session.user == "Guest":
-		frappe.throw(_("Please login to submit information."))
+	# if frappe.session.user == "Guest":
+	# 	frappe.throw(_("Please login to submit information."))
 
 	from custom_special.abk_portal.api import require_verified_member
 
-	require_verified_member()
+	# require_verified_member()
 
 	media_rows = frappe.parse_json(kwargs.get("media") or "[]")
 	data = {

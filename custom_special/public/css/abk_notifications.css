@@ -1,0 +1,17 @@
+.dropdown-notifications .nav-link,
+.notifications-icon {
+	position: relative;
+}
+
+.dropdown-notifications .nav-link.abk-has-unread .abk-notification-dot,
+.notifications-icon.abk-has-unread .abk-notification-dot {
+	background: #e03131;
+	border: 2px solid var(--fg-color, #fff);
+	border-radius: 999px;
+	height: 10px;
+	position: absolute;
+	right: 4px;
+	top: 4px;
+	width: 10px;
+	z-index: 2;
+}

@@ -1,7 +1,7 @@
 {
  "actions": [],
- "autoname": "format:USI-.#####",
- "creation": "2026-05-07 00:00:00.000000",
+ "autoname": "format:USI-{submitter_phone}-{######}",
+ "creation": "2026-05-07 00:00:00",
  "doctype": "DocType",
  "document_type": "Document",
  "engine": "InnoDB",
@@ -239,12 +239,12 @@
    "label": "Admin Notes"
   }
  ],
- "idx": 0,
  "links": [],
- "modified": "2026-05-07 00:00:00.000000",
+ "modified": "2026-05-12 11:06:14.672489",
  "modified_by": "Administrator",
  "module": "ABK Portal",
  "name": "User Submitted Info",
+ "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
   {
@@ -271,11 +271,12 @@
    "role": "Website User"
   },
   {
-   "read": 1,
    "if_owner": 1,
+   "read": 1,
    "role": "Website User"
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],

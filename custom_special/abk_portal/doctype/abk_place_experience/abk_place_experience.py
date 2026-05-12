@@ -3,6 +3,8 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import now
 
+from custom_special.abk_portal.notifications import notify_system_managers
+
 
 ADMIN_ROLES = {"ABK Admin", "System Manager"}
 
@@ -13,6 +15,14 @@ class ABKPlaceExperience(Document):
 
 	def validate(self):
 		self.validate_badges()
+
+	def after_insert(self):
+		notify_system_managers(
+			"Pengalaman baru menunggu review",
+			"Ada pengalaman parent baru yang perlu dicek admin.",
+			self.doctype,
+			self.name,
+		)
 
 	def set_defaults(self):
 		if not self.verification_status:

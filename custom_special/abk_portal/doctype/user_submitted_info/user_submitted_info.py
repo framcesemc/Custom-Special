@@ -4,6 +4,7 @@ from frappe.model.document import Document
 from frappe.utils import escape_html, now
 
 from custom_special.abk_portal.media import get_media_kind, validate_media_row
+from custom_special.abk_portal.notifications import notify_system_managers
 
 
 ADMIN_ROLES = {"ABK Admin", "System Manager"}
@@ -13,6 +14,14 @@ class UserSubmittedInfo(Document):
 	def before_insert(self):
 		if not self.verification_status:
 			self.verification_status = "New"
+
+	def after_insert(self):
+		notify_system_managers(
+			"Info tempat baru menunggu verifikasi",
+			"Ada referensi ABK Place baru yang dikirim user.",
+			self.doctype,
+			self.name,
+		)
 
 	def validate(self):
 		if self.is_new() and self.verification_status != "New" and not has_abk_admin_role():

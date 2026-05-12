@@ -1,7 +1,7 @@
 {
  "actions": [],
- "autoname": "format:PI-.#####",
- "creation": "2026-05-07 00:00:00.000000",
+ "autoname": "format:PI-{phone}-{######}",
+ "creation": "2026-05-07 00:00:00",
  "doctype": "DocType",
  "document_type": "Document",
  "engine": "InnoDB",
@@ -108,12 +108,12 @@
    "label": "Follow Up Notes"
   }
  ],
- "idx": 0,
  "links": [],
- "modified": "2026-05-07 00:00:00.000000",
+ "modified": "2026-05-12 11:03:04.164967",
  "modified_by": "Administrator",
  "module": "ABK Portal",
  "name": "Parent Inquiry",
+ "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
   {
@@ -136,6 +136,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],

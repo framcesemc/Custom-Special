@@ -1,7 +1,7 @@
 {
  "actions": [],
- "autoname": "format:ABK-EXP-.#####",
- "creation": "2026-05-11 00:00:00.000000",
+ "autoname": "format:EXP-{reviewer_user}-{#####}",
+ "creation": "2026-05-11 00:00:00",
  "doctype": "DocType",
  "document_type": "Document",
  "engine": "InnoDB",
@@ -138,12 +138,12 @@
    "read_only": 1
   }
  ],
- "idx": 0,
  "links": [],
- "modified": "2026-05-11 00:00:00.000000",
+ "modified": "2026-05-12 11:05:07.760951",
  "modified_by": "Administrator",
  "module": "ABK Portal",
  "name": "ABK Place Experience",
+ "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
   {
@@ -176,6 +176,7 @@
    "role": "Website User"
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
