@@ -153,11 +153,18 @@ def require_verified_member():
 		frappe.throw(message, frappe.PermissionError)
 
 
+from werkzeug.exceptions import HTTPException
+from werkzeug.utils import redirect
+
 def redirect_members_from_desk():
 	if not hasattr(frappe.local, "request"):
 		return
 
 	path = frappe.local.request.path or ""
+
+	if path in ("/login", "/login/") and frappe.local.request.method == "GET":
+		raise HTTPException(response=redirect("/abk/login"))
+
 	if not is_desk_route(path):
 		return
 
@@ -170,8 +177,7 @@ def redirect_members_from_desk():
 	if not is_frontend_only_user(frappe.session.user):
 		return
 
-	frappe.local.flags.redirect_location = "/abk"
-	raise frappe.Redirect
+	raise HTTPException(response=redirect("/abk"))
 
 
 def is_desk_user_allowed():
@@ -203,6 +209,9 @@ def is_desk_route(path):
 def get_website_user_home_page(user):
 	if is_frontend_only_user(user):
 		return "abk"
+
+	if is_abk_admin_user(user) or user == "Administrator":
+		return "app"
 
 	return None
 

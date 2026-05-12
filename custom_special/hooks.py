@@ -59,7 +59,7 @@ web_include_css = [
 # ----------
 
 # application home page (will override Website Settings)
-# home_page = "login"
+home_page = "abk"
 
 # website user home page (by Role)
 # role_home_page = {
@@ -79,6 +79,13 @@ website_route_rules = [
 	{"from_route": "/abk/place/<slug>", "to_route": "abk/place"},
 	{"from_route": "/abk/shadow-teacher/<slug>", "to_route": "abk/shadow_teacher"},
 	{"from_route": "/abk/article/<slug>", "to_route": "abk/article"},
+	{"from_route": "/login/admin-signin", "to_route": "login"},
+]
+
+website_redirects = [
+	{"source": "/login/app", "target": "/app"},
+	{"source": "/login/desk", "target": "/app"},
+	{"source": "/abk/login/abk", "target": "/abk"}
 ]
 
 # Jinja
