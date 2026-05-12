@@ -33,7 +33,7 @@
             <!-- Form area -->
             <div class="p-8">
                 <!-- Alert area -->
-                <div id="abk-login-alert" class="hidden mb-6 p-4 rounded-2xl text-sm font-semibold"></div>
+                <div id="abk-login-alert" class="{% if not status_message %}hidden {% endif %}mb-6 p-4 rounded-2xl text-sm font-semibold {% if status_message %}bg-amber-50 border border-amber-200 text-amber-800{% endif %}">{{ status_message }}</div>
 
                 <form id="abk-login-form" class="space-y-5" novalidate>
                     <input type="hidden" name="redirect_to" value="{{ redirect_to }}">
@@ -189,13 +189,32 @@ frappe.ready(function () {
             method: 'login',
             args: { usr: email, pwd: password },
             callback: function (r) {
-                setLoading(false);
                 if (r && r.message === 'Logged In') {
-                    showAlert('Login berhasil! Mengalihkan...', 'success');
-                    setTimeout(function () {
-                        window.location.href = redirectTo;
-                    }, 800);
+                    frappe.call({
+                        method: 'custom_special.abk_portal.api.get_member_login_result',
+                        args: { redirect_to: redirectTo },
+                        callback: function (statusResponse) {
+                            setLoading(false);
+                            const result = statusResponse.message || {};
+                            if (result.verified) {
+                                showAlert('Login berhasil! Mengalihkan...', 'success');
+                                setTimeout(function () {
+                                    window.location.href = result.redirect_to || redirectTo;
+                                }, 800);
+                            } else {
+                                showAlert(result.message || 'Akun belum terverifikasi.', 'error');
+                                setTimeout(function () {
+                                    window.location.href = result.redirect_to || '/abk/login';
+                                }, 1200);
+                            }
+                        },
+                        error: function () {
+                            setLoading(false);
+                            showAlert('Login berhasil, tetapi status member belum dapat dicek. Silakan coba lagi.', 'error');
+                        }
+                    });
                 } else {
+                    setLoading(false);
                     showAlert('Login gagal. Periksa email dan password Anda.', 'error');
                 }
             },

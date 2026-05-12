@@ -138,6 +138,45 @@ def get_current_member_status():
 	return status.lower() if status else "missing"
 
 
+@frappe.whitelist()
+def get_member_login_result():
+	"""Return ABK member login result and logout unverified frontend users."""
+	if frappe.session.user == "Guest":
+		return {
+			"status": "guest",
+			"verified": False,
+			"logged_out": True,
+			"redirect_to": "/abk/login",
+			"message": _("Silakan login terlebih dahulu."),
+		}
+
+	status = get_current_member_status()
+	if status == "verified":
+		return {
+			"status": status,
+			"verified": True,
+			"logged_out": False,
+			"redirect_to": frappe.form_dict.get("redirect_to") or "/abk/submit-info",
+			"message": _("Login berhasil."),
+		}
+
+	message_by_status = {
+		"pending": _("Akun Anda sedang menunggu verifikasi admin. Silakan login kembali setelah akun diverifikasi."),
+		"rejected": _("Akun Anda belum dapat digunakan. Silakan hubungi admin."),
+		"missing": _("Akun Anda belum memiliki profil member ABK. Silakan daftar ulang atau hubungi admin."),
+	}
+	message = message_by_status.get(status, _("Akun Anda belum dapat mengakses fitur member."))
+
+	frappe.local.login_manager.logout()
+	return {
+		"status": status,
+		"verified": False,
+		"logged_out": True,
+		"redirect_to": f"/abk/login?status={status}",
+		"message": message,
+	}
+
+
 def require_verified_member():
 	status = get_current_member_status()
 	if status != "verified":
