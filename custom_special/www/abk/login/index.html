@@ -185,7 +185,7 @@ frappe.ready(function () {
 
         setLoading(true);
 
-        frappe.call({
+        const req = frappe.call({
             method: 'login',
             args: { usr: email, pwd: password },
             callback: function (r) {
@@ -213,6 +213,9 @@ frappe.ready(function () {
                             showAlert('Login berhasil, tetapi status member belum dapat dicek. Silakan coba lagi.', 'error');
                         }
                     });
+                } else if (r && r.exc) {
+                    setLoading(false);
+                    // Let always() or Frappe handle msgprint if any
                 } else {
                     setLoading(false);
                     showAlert('Login gagal. Periksa email dan password Anda.', 'error');
@@ -231,6 +234,15 @@ frappe.ready(function () {
                 }
             }
         });
+
+        if (req && typeof req.always === "function") {
+            req.always(function() {
+                // If the user isn't successfully logged in, we re-enable
+                if (loginBtnText.textContent === 'Memproses...') {
+                    setLoading(false);
+                }
+            });
+        }
     });
 });
 </script>

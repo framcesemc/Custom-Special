@@ -432,21 +432,20 @@ frappe.ready(function () {
         pwdSubmitBtn.disabled = true;
         pwdSubmitBtn.textContent = 'Memproses...';
 
-        frappe.call({
+        const req = frappe.call({
             method: 'custom_special.abk_portal.api.change_member_password',
             args: { old_password: oldPwd, new_password: newPwd },
             callback: function (r) {
-                pwdSubmitBtn.disabled = false;
-                pwdSubmitBtn.textContent = 'Ganti Password';
-                if (r && !r.exc) {
-                    showPwdAlert('Password berhasil diperbarui.', 'success');
+                const result = r.message || {};
+                if (result.ok) {
+                    showPwdAlert(result.message || 'Password berhasil diperbarui.', 'success');
                     pwdForm.reset();
                     strengthMsg.classList.add('hidden');
+                } else {
+                    showPwdAlert(result.message || 'Gagal mengganti password. Coba lagi.', 'error');
                 }
             },
             error: function (r) {
-                pwdSubmitBtn.disabled = false;
-                pwdSubmitBtn.textContent = 'Ganti Password';
                 let msg = 'Gagal mengganti password. Coba lagi.';
                 if (r && r._server_messages) {
                     try {
@@ -457,6 +456,13 @@ frappe.ready(function () {
                 showPwdAlert(msg, 'error');
             }
         });
+        
+        if (req && typeof req.always === 'function') {
+            req.always(function() {
+                pwdSubmitBtn.disabled = false;
+                pwdSubmitBtn.textContent = 'Ganti Password';
+            });
+        }
     });
 });
 </script>

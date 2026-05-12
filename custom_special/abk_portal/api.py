@@ -314,11 +314,17 @@ def change_member_password(old_password, new_password):
 	try:
 		check_password(frappe.session.user, old_password)
 	except frappe.AuthenticationError:
-		frappe.throw(_("Password lama tidak sesuai."))
+		return {"ok": False, "message": _("Password lama tidak sesuai.")}
 
 	# Update password using Frappe's built-in (enforces password policy)
 	from frappe.utils.password import update_password
-	update_password(frappe.session.user, new_password)
+	try:
+		update_password(frappe.session.user, new_password)
+	except frappe.exceptions.ValidationError as e:
+		return {"ok": False, "message": str(e) or _("Password baru tidak memenuhi syarat keamanan.")}
+	except Exception as e:
+		return {"ok": False, "message": _("Gagal mengganti password. Coba lagi.")}
+
 	return {"ok": True, "message": _("Password berhasil diperbarui.")}
 
 
