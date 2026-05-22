@@ -27,7 +27,7 @@
         <div class="container mx-auto px-4">
             <div class="max-w-4xl mx-auto">
 
-                {% if is_guest %}
+                {% if login_required and is_guest %}
                 <!-- === STATE: Guest === -->
                 <div class="bg-white rounded-abk p-14 text-center shadow-sm border border-orange-100">
                     <div class="w-20 h-20 bg-orange-50 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-6">🔑</div>
@@ -39,7 +39,7 @@
                     </div>
                 </div>
 
-                {% elif member_status == "missing" %}
+                {% elif login_required and member_status == "missing" %}
                 <!-- === STATE: No member profile === -->
                 <div class="bg-white rounded-abk p-14 text-center shadow-sm border border-amber-100">
                     <div class="w-20 h-20 bg-amber-50 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-6">📋</div>
@@ -48,7 +48,7 @@
                     <a href="/abk/register" class="btn-abk-primary no-underline text-base px-10 py-4">Daftar Member</a>
                 </div>
 
-                {% elif member_status == "pending" %}
+                {% elif login_required and member_status == "pending" %}
                 <!-- === STATE: Pending verification === -->
                 <div class="bg-white rounded-abk p-14 text-center shadow-sm border border-blue-100">
                     <div class="w-20 h-20 bg-blue-50 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-6">⌛</div>
@@ -57,7 +57,7 @@
                     <a href="/abk" class="btn-abk-outline no-underline text-base px-10 py-4">Kembali ke Portal</a>
                 </div>
 
-                {% elif member_status == "rejected" %}
+                {% elif login_required and member_status == "rejected" %}
                 <!-- === STATE: Rejected === -->
                 <div class="bg-white rounded-abk p-14 text-center shadow-sm border border-red-100">
                     <div class="w-20 h-20 bg-red-50 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-6">❌</div>
@@ -186,16 +186,16 @@
                                 </div>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <label class="block text-xs font-black text-slate-400 uppercase tracking-wider mb-2">📁 File Foto/Video</label>
-                                        <input class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm" id="media-files" type="file" multiple accept="image/*,video/*">
+                                        <label class="block text-xs font-black text-slate-400 uppercase tracking-wider mb-2">📁 File Foto</label>
+                                        <input class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm" id="media-files" type="file" multiple accept="image/jpeg,image/png,image/webp">
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-black text-slate-400 uppercase tracking-wider mb-2">📝 Caption File</label>
-                                        <input class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm" id="media-file-caption" placeholder="Caption untuk file yang diupload">
+                                        <label class="block text-xs font-black text-slate-400 uppercase tracking-wider mb-2">📝 Caption Foto</label>
+                                        <input class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm" id="media-file-caption" placeholder="Caption untuk foto yang diupload">
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-black text-slate-400 uppercase tracking-wider mb-2">🔗 URL Media</label>
-                                        <input class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm" id="media-url" placeholder="https://...">
+                                        <label class="block text-xs font-black text-slate-400 uppercase tracking-wider mb-2">🔗 URL Media / YouTube</label>
+                                        <input class="w-full bg-slate-50 border-none rounded-2xl p-3.5 focus:ring-2 focus:ring-orange-200 text-slate-700 font-semibold text-sm" id="media-url" placeholder="https://youtube.com/watch?v=...">
                                     </div>
                                     <div>
                                         <label class="block text-xs font-black text-slate-400 uppercase tracking-wider mb-2">📝 Caption URL</label>
@@ -207,7 +207,7 @@
                             <!-- Info note -->
                             <div class="bg-blue-50 rounded-2xl p-4 flex gap-3 items-start border border-blue-100">
                                 <span class="text-blue-500 text-lg flex-shrink-0">ℹ️</span>
-                                <p class="text-xs text-blue-700 font-semibold leading-relaxed">Info yang dikirim masuk tidak akan dipublikasikan sebelum disetujui admin.</p>
+                                <p class="text-xs text-blue-700 font-semibold leading-relaxed">Info yang dikirim masuk tidak akan dipublikasikan sebelum disetujui admin. Foto akan dioptimasi sebelum disimpan; video gunakan link YouTube agar storage internal tetap ringan.</p>
                             </div>
 
                             <!-- Submit Button -->
@@ -239,25 +239,30 @@ frappe.ready(function() {
         btn.innerHTML = '<svg class="animate-spin h-5 w-5 mr-2 text-white inline" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Mengirim Data...';
 
         const args = Object.fromEntries(new FormData(form));
+        let mediaRows = [];
+        try {
+            mediaRows = await uploadSelectedFiles();
+        } catch (error) {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+            frappe.msgprint(error.message || "Sebagian file belum berhasil diupload.");
+            return;
+        }
+
         const mediaUrl = document.getElementById("media-url").value.trim();
         const mediaUrlCaption = document.getElementById("media-url-caption").value.trim();
-        args.media = JSON.stringify(mediaUrl ? [{ media_type: "URL", media_url: mediaUrl, caption: mediaUrlCaption, sort_order: 1 }] : []);
+        if (mediaUrl) {
+            mediaRows.unshift({ media_type: "URL", media_url: mediaUrl, caption: mediaUrlCaption, sort_order: 1 });
+        }
+        args.media = JSON.stringify(mediaRows);
 
         frappe.call({
             method: "custom_special.abk_portal.public.submit_user_submitted_info",
             args,
-            callback: async function(r) {
-                const docname = r.message && r.message.name;
-                try {
-                    if (docname) await uploadSelectedFiles(docname);
-                    document.getElementById("submit-form-wrapper").classList.add("hidden");
-                    document.getElementById("submit-success").classList.remove("hidden");
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                } catch (error) {
-                    frappe.msgprint("Info tersimpan, tetapi sebagian media belum berhasil diupload.");
-                    document.getElementById("submit-form-wrapper").classList.add("hidden");
-                    document.getElementById("submit-success").classList.remove("hidden");
-                }
+            callback: function() {
+                document.getElementById("submit-form-wrapper").classList.add("hidden");
+                document.getElementById("submit-success").classList.remove("hidden");
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             },
             error: function() {
                 btn.disabled = false;
@@ -267,29 +272,35 @@ frappe.ready(function() {
         });
     });
 
-    async function uploadSelectedFiles(docname) {
+    async function uploadSelectedFiles() {
         const input = document.getElementById("media-files");
         const caption = document.getElementById("media-file-caption").value.trim();
         const files = Array.from(input.files || []);
+        const rows = [];
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
+            if (!file.type || file.type.indexOf("image/") !== 0) {
+                throw new Error("Upload file hanya untuk foto JPG, PNG, atau WEBP. Video bisa dikirim lewat link YouTube.");
+            }
+
             const formData = new FormData();
             formData.append("file", file);
             formData.append("is_private", "0");
-            const response = await fetch("/api/method/upload_file", {
+            formData.append("max_width", "1600");
+            formData.append("max_height", "1200");
+            const response = await fetch("/api/method/custom_special.abk_portal.public.upload_submission_media", {
                 method: "POST",
                 headers: { "X-Frappe-CSRF-Token": frappe.csrf_token },
                 body: formData
             });
             const result = await response.json();
             const fileUrl = result.message && result.message.file_url;
-            if (fileUrl) {
-                await frappe.call({
-                    method: "custom_special.abk_portal.public.append_submission_media",
-                    args: { name: docname, media_type: file.type && file.type.indexOf("video/") === 0 ? "Video" : "Image", media_file: fileUrl, caption, sort_order: i + 2 }
-                });
+            if (!response.ok || result.exc || !fileUrl) {
+                throw new Error("Upload foto gagal. Coba lagi dengan ukuran file yang lebih kecil.");
             }
+            rows.push({ media_type: "Image", media_file: fileUrl, caption, sort_order: i + 2 });
         }
+        return rows;
     }
 });
 </script>

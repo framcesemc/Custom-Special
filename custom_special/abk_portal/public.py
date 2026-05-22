@@ -1,11 +1,14 @@
 from collections import Counter
+from mimetypes import guess_type
 
 import frappe
 from frappe import _
 from frappe.rate_limiter import rate_limit
 from frappe.utils import cstr, strip_html
+from frappe.utils.file_manager import save_file
+from frappe.utils.image import optimize_image
 
-from custom_special.abk_portal.media import normalize_public_media
+from custom_special.abk_portal.media import ALLOWED_IMAGE_EXTENSIONS, get_media_extension, normalize_public_media
 
 
 ABK_ARTICLE_CATEGORIES = [
@@ -638,12 +641,11 @@ def submit_parent_inquiry(
 @frappe.whitelist(allow_guest=True)
 @rate_limit(limit=20, seconds=60 * 60)
 def submit_user_submitted_info(**kwargs):
-	# if frappe.session.user == "Guest":
-	# 	frappe.throw(_("Please login to submit information."))
+	from custom_special.abk_portal.api import allow_guest_submit_info, require_verified_member
 
-	from custom_special.abk_portal.api import require_verified_member
-
-	# require_verified_member()
+	guest_submission_allowed = allow_guest_submit_info()
+	if not guest_submission_allowed:
+		require_verified_member()
 
 	media_rows = frappe.parse_json(kwargs.get("media") or "[]")
 	data = {
@@ -682,24 +684,60 @@ def submit_user_submitted_info(**kwargs):
 			continue
 
 		media_type = row.get("media_type")
+		media_file = strip_html(cstr(row.get("media_file")).strip())
 		media_url = strip_html(cstr(row.get("media_url")).strip())
 		caption = strip_html(cstr(row.get("caption")).strip())
-		if not media_type and not media_url and not caption:
+		if not media_type and not media_file and not media_url and not caption:
 			continue
 
 		doc.append(
 			"media",
 			{
 				"media_type": media_type,
+				"media_file": media_file,
 				"media_url": media_url,
 				"caption": caption,
 				"sort_order": row.get("sort_order"),
 			},
 		)
 
-	doc.insert()
+	doc.insert(ignore_permissions=guest_submission_allowed and frappe.session.user == "Guest")
 
 	return {"name": doc.name}
+
+
+@frappe.whitelist(allow_guest=True, methods=["POST"])
+@rate_limit(limit=12, seconds=60 * 60)
+def upload_submission_media():
+	from custom_special.abk_portal.api import allow_guest_submit_info, require_verified_member
+
+	guest_submission_allowed = allow_guest_submit_info()
+	if not guest_submission_allowed:
+		require_verified_member()
+
+	files = frappe.request.files
+	if "file" not in files:
+		frappe.throw(_("File is required."))
+
+	file = files["file"]
+	filename = strip_html(cstr(file.filename)).strip()
+	content = file.stream.read()
+	content_type = guess_type(filename)[0] or file.content_type
+
+	if get_media_extension(filename) not in ALLOWED_IMAGE_EXTENSIONS or not cstr(content_type).startswith("image/"):
+		frappe.throw(_("Upload file hanya untuk foto JPG, PNG, atau WEBP. Video bisa dikirim lewat link YouTube."))
+
+	max_width = int(frappe.form_dict.get("max_width") or 1600)
+	max_height = int(frappe.form_dict.get("max_height") or 1200)
+	content = optimize_image(content, content_type, max_width=max_width, max_height=max_height, quality=82)
+
+	file_doc = save_file(filename, content, None, None, is_private=0)
+	return {
+		"name": file_doc.name,
+		"file_url": file_doc.file_url,
+		"file_name": file_doc.file_name,
+		"file_size": file_doc.file_size,
+	}
 
 
 @frappe.whitelist()

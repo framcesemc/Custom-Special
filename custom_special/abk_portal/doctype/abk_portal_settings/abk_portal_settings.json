@@ -1,0 +1,59 @@
+{
+ "actions": [],
+ "creation": "2026-05-22 00:00:00.000000",
+ "doctype": "DocType",
+ "document_type": "Setup",
+ "engine": "InnoDB",
+ "field_order": [
+  "submission_section",
+  "allow_guest_submit_info",
+  "guest_submit_info_help"
+ ],
+ "fields": [
+  {
+   "fieldname": "submission_section",
+   "fieldtype": "Section Break",
+   "label": "Submit Info"
+  },
+  {
+   "default": "1",
+   "description": "Jika aktif, pengunjung tanpa login dapat mengirim referensi dari halaman /abk/submit-info. Jika nonaktif, hanya member terverifikasi yang dapat mengirim.",
+   "fieldname": "allow_guest_submit_info",
+   "fieldtype": "Check",
+   "label": "Allow Guest Submit Info"
+  },
+  {
+   "fieldname": "guest_submit_info_help",
+   "fieldtype": "HTML",
+   "options": "<div class=\"text-muted small\">Perubahan berlaku setelah disimpan. File foto dari guest tetap dioptimasi sebelum disimpan; video sebaiknya dikirim sebagai link YouTube.</div>"
+  }
+ ],
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-05-22 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "ABK Portal",
+ "name": "ABK Portal Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "ABK Admin",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

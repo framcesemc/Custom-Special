@@ -1,12 +1,35 @@
 import frappe
 from frappe import _
 from frappe.rate_limiter import rate_limit
-from frappe.utils import cstr, getdate, strip_html, validate_email_address, validate_phone_number
+from frappe.utils import cint, cstr, getdate, strip_html, validate_email_address, validate_phone_number
 
 
 RELATIONSHIP_OPTIONS = {"Parent", "Guardian", "Teacher", "Therapist", "School Staff", "Other"}
 DESK_ROLES = {"System Manager", "ABK Admin"}
 FRONTEND_ONLY_ROLES = {"Website User"}
+
+
+def allow_guest_submit_info():
+	config_value = cint(frappe.conf.get("abk_allow_guest_submit_info", 1))
+
+	try:
+		if frappe.db.exists("DocType", "ABK Portal Settings"):
+			settings = frappe.db.sql(
+				"""
+				select value
+				from `tabSingles`
+				where doctype = %s and field = %s
+				limit 1
+				""",
+				("ABK Portal Settings", "allow_guest_submit_info"),
+				as_dict=True,
+			)
+			if settings:
+				return bool(cint(settings[0].value))
+	except Exception:
+		pass
+
+	return bool(config_value)
 
 
 @frappe.whitelist(allow_guest=True)

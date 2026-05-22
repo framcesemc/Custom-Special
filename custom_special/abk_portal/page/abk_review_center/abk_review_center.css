@@ -1,0 +1,121 @@
+.abk-review-center {
+	padding: 16px 0 32px;
+}
+
+.abk-review-tabs {
+	align-items: center;
+	border-bottom: 1px solid var(--border-color);
+	display: flex;
+	gap: 8px;
+	margin-bottom: 16px;
+	overflow-x: auto;
+}
+
+.abk-review-tabs button {
+	background: transparent;
+	border: 0;
+	border-bottom: 2px solid transparent;
+	color: var(--text-muted);
+	font-weight: 700;
+	padding: 12px 10px;
+	white-space: nowrap;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	transition: all 0.2s;
+}
+
+.abk-review-tabs button:hover {
+	color: var(--text-color);
+}
+
+.abk-review-tabs button.active {
+	border-bottom-color: var(--primary);
+	color: var(--text-color);
+}
+
+.abk-badge-count {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 20px;
+	height: 20px;
+	padding: 0 6px;
+	border-radius: 10px;
+	font-size: 11px;
+	font-weight: bold;
+	color: white;
+}
+
+.bg-blue-500 { background-color: #3b82f6; }
+.bg-orange-500 { background-color: #f97316; }
+.bg-purple-500 { background-color: #a855f7; }
+.bg-green-500 { background-color: #22c55e; }
+
+.abk-review-section {
+	display: none;
+}
+
+.abk-review-section.active {
+	display: block;
+}
+
+.abk-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	min-width: 200px;
+}
+
+/* Tabulator adjustments */
+.tabulator {
+	border-radius: 12px;
+	border-color: var(--border-color) !important;
+	background: transparent !important;
+	overflow: hidden;
+}
+
+.tabulator-header {
+	background-color: #f3f4f6 !important;
+	border-bottom: 1px solid var(--border-color) !important;
+	border-top-left-radius: 12px;
+	border-top-right-radius: 12px;
+}
+
+.tabulator-col-title {
+	font-weight: 800 !important;
+	text-transform: uppercase;
+	font-size: 10.5px;
+	color: #6b7280;
+	padding: 4px 0;
+}
+
+.tabulator-row {
+	background: var(--card-bg) !important;
+	border-bottom: 1px solid var(--border-color) !important;
+	font-size: 13px;
+}
+
+.tabulator-row:nth-child(even) {
+	background: #fdfdfd !important;
+}
+
+.tabulator-cell {
+	padding: 10px 8px !important;
+	vertical-align: middle;
+}
+
+.tabulator-footer {
+	background-color: #f8fafc !important;
+	border-top: 1px solid var(--border-color) !important;
+	border-bottom-left-radius: 12px;
+	border-bottom-right-radius: 12px;
+	padding: 6px 8px !important;
+}
+
+.tabulator-footer .tabulator-page {
+	font-size: 11px;
+	padding: 4px 8px;
+	border-radius: 6px;
+	margin: 0 2px;
+}
